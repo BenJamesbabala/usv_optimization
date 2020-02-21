@@ -8,17 +8,17 @@ def series64(L, S, Delta, Cb, Vk) : #inputs in meters, meters^2, metric tonnes, 
     #conversion
     V = Vk/1.944 #m/s
     Fn = V/math.sqrt(g*L) #unitless
-    D = Delta/(g*rho) # meters^3
     D3 = math.pow(Delta,(1/3)) #meters
+    if D3 < 1:
+        D3 = 1
+    
 
     #set up equation for C_R
     if Cb < 0.3:
-        print("Block too low")
         a, n = 0, 0
     elif Cb < 0.4 and Cb >= 0.3 :
         if Fn < 0.35:
             a, n = 0, 0
-            print("invalid Froude Number")
         elif Fn < 0.45 and Fn >= 0.35 :
             a, n = 288, -2.33
         elif Fn < 0.55 and Fn >= 0.45 :
@@ -35,11 +35,9 @@ def series64(L, S, Delta, Cb, Vk) : #inputs in meters, meters^2, metric tonnes, 
             a, n = 25, -1.50
         else:
             a,n = 0,0
-            print("invalid Froude Number")
     elif Cb < 0.5 and Cb >= 0.4 :
         if Fn < 0.35:
             a, n = 0, 0
-            print("invalid Froude Number")
         elif Fn < 0.45 and Fn >= 0.35 :
             a, n = 36726, -4.41
         elif Fn < 0.55 and Fn >= 0.45 :
@@ -56,11 +54,9 @@ def series64(L, S, Delta, Cb, Vk) : #inputs in meters, meters^2, metric tonnes, 
             a, n = 11644, -4.24
         else:
             a,n = 0,0
-            print("invalid Froude Number")
     elif Cb < 0.6 and Cb >= 0.5 :
         if Fn < 0.35:
             a, n = 0, 0
-            print("invalid Froude Number")
         elif Fn < 0.45 and Fn >= 0.35 :
             a, n = 926, -2.74
         elif Fn < 0.55 and Fn >= 0.45 :
@@ -77,24 +73,12 @@ def series64(L, S, Delta, Cb, Vk) : #inputs in meters, meters^2, metric tonnes, 
             a, n = 199, -2.38
         else:
             a,n = 0,0
-            print("invalid Froude Number")
     else:
-        print("Block too high")
         a, n = 0, 0
 
     #estimate C_R
     C = (a*(math.pow((L/D3),n)))/1000 #unitless
 
-    #checks
-    print("C_R: ", round(C,5), " - ")
-    print("S: ",round(S,2), " m^2 ")
-    print("V: ",round(V,3), " m/s ")
-    print("Fn: ",round(Fn,4), " - ")
-
     #calulate and return R
     R = C*(0.5)*rho*S*V*V #newtons
-    print("R: ",round((R/1000),2)," kN ")
     return R
-
-R = series64(30,400,650,.45,16) #inputs in meters, meters^2, metric tonnes, unitless, knots
-#R = series64(40,500,800,.45,16) #inputs in meters, meters^2, metric tonnes, unitless, knots
