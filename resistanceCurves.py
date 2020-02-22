@@ -1,5 +1,6 @@
 import math
 
+# Series 64 resistance taken from Ship Resistance and Propulsion by Molland
 def series64(L, S, Delta, Cb, Vk) : #inputs in meters, meters^2, metric tonnes, unitless, knots
     #constants
     rho = 1026.0 #kg/m^3
@@ -9,9 +10,9 @@ def series64(L, S, Delta, Cb, Vk) : #inputs in meters, meters^2, metric tonnes, 
     V = Vk/1.944 #m/s
     Fn = V/math.sqrt(g*L) #unitless
     D3 = math.pow(Delta,(1/3)) #meters
+    # a check to avoid division by zero in optimization
     if D3 < 1:
         D3 = 1
-    
 
     #set up equation for C_R
     if Cb < 0.3:
