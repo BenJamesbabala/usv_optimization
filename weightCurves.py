@@ -44,10 +44,16 @@ def parsonsWts(Cb, D, T, L, B, MCR, Vk) : # inputs in unitless, meters, meters, 
 
 # ---------
 # Based on Grubisic and Begovic, 2009
-# NOTES: Approximating L_p = L_wl = L_oa,
-def grubisicWts(Disp, D, T, L, B, MCR, Vk) : # inputs in metric tonnes, meters, meters, meters, meters, kilowatts, knots
+# NOTES: Approximating L_p = L_wl = L_oa, ELIMINATING depth input, will approximate based on draft,
+def grubisicWts(Cb, T, L, B, MCR, Vk) : # inputs in unitless, meters, meters, meters, kilowatts, knots
     rho = 1026.0 #kg/m^3
     g = 9.81 #m/s^2
+
+    # Approximate displacment, per definition of block coefficient
+    Disp = (rho/1000)*Cb*L*B*T #metric tonnes
+
+    # Approximate depth based on draft, eqn from Grubisic 2012
+    D = (2.493)*math.pow(T,0.582)
 
     # estimate surface areas
     S1 = 2.825*math.sqrt((Disp/rho)*L) #bottom
@@ -62,7 +68,7 @@ def grubisicWts(Disp, D, T, L, B, MCR, Vk) : # inputs in metric tonnes, meters, 
     DispLR = 0.125*((L*L)-15.8) #tonnes
     nabla = (DispLR + Disp)/rho
     fdis = 0.7 + (2.4*(nabla/((L*L)-15.8)))
-    CTD = 1.144*math.pow((T/D),0.244)
+    CTD = 1.144*math.pow((T/(D+0.0001)),0.244) #modified to prevent a divide by zero
 
     # structural numeral
     Es = fdis*CTD*SR # meters^2
