@@ -4,6 +4,7 @@
 # package, function, and class imports
 from __future__ import division, print_function
 from Weights import Weights
+from Stability import Stability
 import openmdao.api as om
 import math
 
@@ -18,17 +19,18 @@ indeps.add_output('B', 5, units='m') #meters
 
 # add the weights component previously defined in Weights.py
 prob.model.add_subsystem('wts', Weights())
+# add the stability component from Stability.py
+prob.model.add_subsystem('stab',Stability())
 
 # define component whose output will be constrained
 # units defined, excess represents the 'excess' displacement of the design
-prob.model.add_subsystem('const', om.ExecComp('excess = (Cb*L*T*B) - Wt', excess={'units': 't'}, Wt={'units': 't'}, T={'units': 'm'}, L={'units': 'm'}, B={'units': 'm'}))
+prob.model.add_subsystem('const', om.ExecComp('Disp=Cb*T*L*B', Disp={'units': 't'}, T={'units': 'm'}, L={'units': 'm'}, B={'units': 'm'}))
 
 #connect components
-prob.model.connect('indeps.Cb', ['wts.Cb', 'const.Cb'])
-prob.model.connect('indeps.T', ['wts.T', 'const.T'])
-prob.model.connect('indeps.L', ['wts.L', 'const.L'])
-prob.model.connect('indeps.B', ['wts.B', 'const.B'])
-prob.model.connect('wts.Wt', 'const.Wt')
+prob.model.connect('indeps.Cb', ['wts.Cb', 'stab.Cb', 'const.Cb'])
+prob.model.connect('indeps.T', ['wts.T', 'stab.T', 'const.T'])
+prob.model.connect('indeps.L', ['wts.L', 'stab.L', 'const.L'])
+prob.model.connect('indeps.B', ['wts.B', 'stab.B', 'const.B'])
 
 # set the range for the independent variables that will be explored
 prob.model.add_design_var('indeps.Cb', lower=0.31, upper=0.59)
@@ -39,12 +41,12 @@ prob.model.add_design_var('indeps.B', lower=5, upper=15)
 # set objective to be minimizing weight
 prob.model.add_objective('wts.Wt')
 # set objective to be minimizing excess displacement
-prob.model.add_objective('const.excess')
+#prob.model.add_objective('const.excess')
 
 # add the constraint to the model
-# this is a displacement constraint to avoid nonfeasible solutions
+# this is a stability constraint to avoid nonfeasible solutions
 # NOTE: Constraints do not seem affect the range of solutions tested in design of experiments
-#prob.model.add_constraint('const.excess', lower=0, upper=100)
+prob.model.add_constraint('stab.GMT', lower=0)
 
 
 # set driver for design of experiment
@@ -66,7 +68,10 @@ print(len(cases))
 values = []
 for case in cases:
     outputs = cr.get_case(case).outputs
-    values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['indeps.B'], outputs['indeps.T'], outputs['wts.Wt'], outputs['const.excess']))
-    #values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['wts.Wt']))
+    #values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['indeps.B'], outputs['indeps.T'], outputs['wts.Wt'], outputs['const.excess']))
+    #values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['wts.Wt'], outputs['const.Disp']))
+    values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['wts.Wt']))
 
-print("\n".join(["Cb: %5.2f, L: %5.2f, B: %5.2f, T: %5.2f, Wt: %6.2f, Excess Displacement: %6.2f" % xyf for xyf in values]))
+#print("\n".join(["Cb: %5.2f, L: %5.2f, B: %5.2f, T: %5.2f, Wt: %6.2f, Excess Displacement: %6.2f" % xyf for xyf in values]))
+#print("\n".join(["Cb: %5.2f, L: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))
+print("\n".join(["Cb: %5.2f, L: %5.2f, Wt: %6.2f" % xyf for xyf in values]))
