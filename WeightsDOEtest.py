@@ -34,9 +34,9 @@ prob.model.connect('indeps.B', ['wts.B', 'stab.B', 'const.B'])
 
 # set the range for the independent variables that will be explored
 prob.model.add_design_var('indeps.Cb', lower=0.31, upper=0.59)
-prob.model.add_design_var('indeps.T', lower=2, upper=7)
-prob.model.add_design_var('indeps.L', lower=20, upper=50)
-prob.model.add_design_var('indeps.B', lower=5, upper=15)
+prob.model.add_design_var('indeps.T', lower=2, upper=5)
+prob.model.add_design_var('indeps.L', lower=25, upper=50)
+prob.model.add_design_var('indeps.B', lower=3, upper=12)
 
 # set objective to be minimizing weight
 prob.model.add_objective('wts.Wt')
@@ -47,19 +47,20 @@ prob.model.add_objective('wts.Wt')
 # this is a stability constraint to avoid nonfeasible solutions
 # NOTE: Constraints do not seem affect the range of solutions tested in design of experiments
 prob.model.add_constraint('stab.GMT', lower=0)
+prob.model.add_constraint('const.Disp', upper=1000)
 
 
 # set driver for design of experiment
-prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
-#prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=10))
-prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
+#prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
+prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=500))
+prob.driver.add_recorder(om.SqliteRecorder("WeightsDOEcases.sql"))
 
 prob.setup()
 prob.run_driver()
 prob.cleanup()
 
-# set up case recording
-cr = om.CaseReader("cases.sql")
+# set up case reading
+cr = om.CaseReader("WeightsDOEcases.sql")
 cases = cr.list_cases('driver')
 
 print(len(cases))
@@ -68,10 +69,6 @@ print(len(cases))
 values = []
 for case in cases:
     outputs = cr.get_case(case).outputs
-    #values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['indeps.B'], outputs['indeps.T'], outputs['wts.Wt'], outputs['const.excess']))
-    #values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['wts.Wt'], outputs['const.Disp']))
-    values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['wts.Wt']))
+    values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['stab.GMT'], outputs['wts.Wt'], outputs['const.Disp']))
 
-#print("\n".join(["Cb: %5.2f, L: %5.2f, B: %5.2f, T: %5.2f, Wt: %6.2f, Excess Displacement: %6.2f" % xyf for xyf in values]))
-#print("\n".join(["Cb: %5.2f, L: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))
-print("\n".join(["Cb: %5.2f, L: %5.2f, Wt: %6.2f" % xyf for xyf in values]))
+print("\n".join(["Cb: %5.2f, L: %5.2f, GMT: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))
