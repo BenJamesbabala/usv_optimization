@@ -116,7 +116,7 @@ def grubisicWts(Cb, T, L, B, MCR, Vk) : # inputs in unitless, meters, meters, me
 # Based on Grubisic and Begovic, 2009
 # assumes no fuel weight
 # NOTES: Approximating L_p = L_wl = L_oa, ELIMINATING depth input, will approximate based on draft,
-def grubisicWtsNoFuel(Cb, T, L, B, MCR) : # inputs in unitless, meters, meters, meters, kilowatts, knots
+def grubisicWtsNoFuel(Cb, T, L, B, MCR, fuel) : # inputs in unitless, meters, meters, meters, kilowatts, metric tonnes
     rho = 1026.0 #kg/m^3
     g = 9.81 #m/s^2
 
@@ -157,6 +157,7 @@ def grubisicWtsNoFuel(Cb, T, L, B, MCR) : # inputs in unitless, meters, meters, 
     Wmach = math.pow(L*B*D,0.94)/45.66 # metric tonnes, remaining machinery`
     Wspp = math.pow(MCR,1.271)/8375 # metric tonnes, approximate weight of controllable pitch propeller
     W200 = Wmach+W250+Wspp # metric tonnes
+    Wfuel = fuel # FUEL WEIGHT IS AN INPUT
 
     # electrical, auxilary machinery, outfit weights
     # NOTE - THESE ARE THE MOST VARIABLE
@@ -174,6 +175,6 @@ def grubisicWtsNoFuel(Cb, T, L, B, MCR) : # inputs in unitless, meters, meters, 
     Wcargo = massCargo/1000 # metric tonnes
 
     #calulate and return R
-    W = W100 + W200 + W300 + W400 + W500 + W600 + W700 + Wcargo # metric tonnes
+    W = W100 + W200 + Wfuel + W300 + W400 + W500 + W600 + W700 + Wcargo # metric tonnes
     W = W*1.05 # metric tonnes, 5% margin
     return W

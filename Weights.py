@@ -56,6 +56,8 @@ class WeightsNoFuel(om.ExplicitComponent):
         self.add_input('L', val=0.0, units='m')
         self.add_input('B', val=0.0, units='m')
         self.add_input('MCR', val=0.0, units='kW')
+        self.add_input('fuel', val=0.0, units='t')
+
 
         self.add_output('Wt', val=0.0, units='t')
 
@@ -69,10 +71,11 @@ class WeightsNoFuel(om.ExplicitComponent):
         L = inputs['L']
         B = inputs['B']
         MCR = inputs['MCR']
+        fuel = inputs['fuel']
 
         # calls the parsonsWts function - note that other estimations could be used
         #outputs['Wt'] = parsonsWts(Cb, D, T, L, B, MCR, 16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
-        outputs['Wt'] = grubisicWtsNoFuel(Cb, T, L, B, MCR) # inputs in unitless, meters, meters, meters, meters, kilowatts
+        outputs['Wt'] = grubisicWtsNoFuel(Cb, T, L, B, MCR, fuel) # inputs in unitless, meters, meters, meters, meters, kilowatts, metric tonnes
 
 # debugging code, verifies that inputs, outputs, and calculations are working properly within the component
 if __name__ == "__main__":
