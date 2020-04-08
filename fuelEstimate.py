@@ -4,7 +4,8 @@ import math
 from poweringEstimate import poweringEstimate
 
 # fuel estimation based on hypothetical mission profile
-def fuelEstimate(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes, unitless
+# define alternative missions with new functions
+def missionFuel1(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes, unitless
     # constants
     rho = 1026.0 #kg/m^3
     g = 9.81 #m/s^2
@@ -34,6 +35,8 @@ def fuelEstimate(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes, u
     PCruise = PBCruise + powNorm #kW
     PLoiter = powSleep #kW
 
+    PMax = max(PSprint, PComm, PCruise, PLoiter) #kW
+
     # calculate fuel consumption
     fuelSprint = SFC*PSprint*hoursSprint #t
     fuelComm = SFC*PComm*hoursComm #t
@@ -42,7 +45,8 @@ def fuelEstimate(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes, u
 
     fuelTot = fuelSprint + fuelComm + fuelCruise + fuelLoiter
 
-    return fuelTot
+    return fuelTot, PMax
 
-fuel = fuelEstimate(40,400,250,.45)
+fuel, MCR = missionFuel1(40,400,250,.45)
 print(fuel)
+print(MCR)

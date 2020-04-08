@@ -55,6 +55,7 @@ class WeightsNoFuel(om.ExplicitComponent):
         self.add_input('T', val=0.0, units='m')
         self.add_input('L', val=0.0, units='m')
         self.add_input('B', val=0.0, units='m')
+        self.add_input('MCR', val=0.0, units='kW')
 
         self.add_output('Wt', val=0.0, units='t')
 
