@@ -3,7 +3,7 @@
 
 # package, function, and class imports
 from __future__ import division, print_function
-from weightCurves import parsonsWts, grubisicWts #modify this if using a different weight estimation
+from weightCurves import parsonsWts, grubisicWts, grubisicWtsNoFuel #modify this if using a different weight estimation
 import openmdao.api as om
 import math
 
@@ -42,6 +42,36 @@ class Weights(om.ExplicitComponent):
         # calls the parsonsWts function - note that other estimations could be used
         #outputs['Wt'] = parsonsWts(Cb, D, T, L, B, MCR, 16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
         outputs['Wt'] = grubisicWts(Cb, T, L, B, 500, 16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
+
+# the definition of the Weights component
+class WeightsNoFuel(om.ExplicitComponent):
+    """
+    Evaluates the weights based on regressions
+    """
+    # setup input and output variables for the component
+    def setup(self) :
+        #setup inputs or variables needed for function
+        self.add_input('Cb', val=0.0)
+        self.add_input('T', val=0.0, units='m')
+        self.add_input('L', val=0.0, units='m')
+        self.add_input('B', val=0.0, units='m')
+
+        self.add_output('Wt', val=0.0, units='t')
+
+        # Finite difference all partials.
+        self.declare_partials('*', '*', method='fd')
+
+    def compute(self, inputs, outputs) :
+        # inputs
+        Cb = inputs['Cb']
+        T = inputs['T']
+        L = inputs['L']
+        B = inputs['B']
+        MCR = inputs['MCR']
+
+        # calls the parsonsWts function - note that other estimations could be used
+        #outputs['Wt'] = parsonsWts(Cb, D, T, L, B, MCR, 16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
+        outputs['Wt'] = grubisicWtsNoFuel(Cb, T, L, B, MCR) # inputs in unitless, meters, meters, meters, meters, kilowatts
 
 # debugging code, verifies that inputs, outputs, and calculations are working properly within the component
 if __name__ == "__main__":

@@ -111,3 +111,69 @@ def grubisicWts(Cb, T, L, B, MCR, Vk) : # inputs in unitless, meters, meters, me
     W = W100 + W200 + Wfuel + W300 + W400 + W500 + W600 + W700 + Wcargo # metric tonnes
     W = W*1.05 # metric tonnes, 5% margin
     return W
+
+# ---------
+# Based on Grubisic and Begovic, 2009
+# assumes no fuel weight
+# NOTES: Approximating L_p = L_wl = L_oa, ELIMINATING depth input, will approximate based on draft,
+def grubisicWtsNoFuel(Cb, T, L, B, MCR) : # inputs in unitless, meters, meters, meters, kilowatts, knots
+    rho = 1026.0 #kg/m^3
+    g = 9.81 #m/s^2
+
+    # Approximate displacment, per definition of block coefficient
+    Disp = (rho/1000)*Cb*L*B*T #metric tonnes
+
+    # Approximate depth based on draft, eqn from Grubisic 2012
+    D = (2.493)*math.pow(T,0.582)
+
+    # estimate surface areas
+    S1 = 2.825*math.sqrt((Disp/rho)*L) #bottom
+    S2 = 1.09*(2*(L+B))*(D-T) #sides
+    S3 = 0.823*L*B #deck
+    Nwtb = L/5 #Approximating number of watertight bulkheads
+    S4 = 0.6*Nwtb*B*D #Bulkheads
+
+    SR = S1 + (0.73*S2) + (0.69*S3) + (0.65*S4) #total reduced surface area
+
+    # correction factors
+    DispLR = 0.125*((L*L)-15.8) #tonnes
+    nabla = (DispLR + Disp)/rho
+    fdis = 0.7 + (2.4*(nabla/((L*L)-15.8)))
+    CTD = 1.144*math.pow((T/(D+0.0001)),0.244) #modified to prevent a divide by zero
+
+    # structural numeral
+    Es = fdis*CTD*SR # meters^2
+
+    # service type and weight constant
+    Gf = 1.20 #for patrol craft
+    Sf = 1.25 #for unrestricted service
+    K = 0.002 + (0.0064*Gf*Sf) # weight constant for aluminium hull
+
+    # structural weights
+    W100 = K*math.pow(Es,1.33) # metric tonnes
+
+    # machinery weights
+    W250 = MCR/286 # metric tonnes, propulsion engine weight
+    Wmach = math.pow(L*B*D,0.94)/45.66 # metric tonnes, remaining machinery`
+    Wspp = math.pow(MCR,1.271)/8375 # metric tonnes, approximate weight of controllable pitch propeller
+    W200 = Wmach+W250+Wspp # metric tonnes
+
+    # electrical, auxilary machinery, outfit weights
+    # NOTE - THESE ARE THE MOST VARIABLE
+    W300 = math.pow(L*B*D,1.24)/592 # metric tonnes, electrical machinery weights
+    W400 = math.pow(L,2.254)/1887 # metric tonnes, electronic equipment weights
+    W500 = math.pow(L*B,1.784)/1295 # metric tonnes, auxilary machinery weights
+    W600 = math.pow(L,2.132)/102.5 # metric tonnes, outfit weights
+
+    # special systems weights
+    W700 = math.pow(L*B*D,1.422)/3000 # metric tonnes, special systems weights
+
+    # cargo weights
+    massContainer = 30000 # kg, from Wikipedia for shipping containers
+    massCargo = 2*massContainer # must carry two containers
+    Wcargo = massCargo/1000 # metric tonnes
+
+    #calulate and return R
+    W = W100 + W200 + W300 + W400 + W500 + W600 + W700 + Wcargo # metric tonnes
+    W = W*1.05 # metric tonnes, 5% margin
+    return W
