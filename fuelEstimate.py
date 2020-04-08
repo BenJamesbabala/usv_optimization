@@ -47,6 +47,6 @@ def missionFuel1(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes, u
 
     return fuelTot, PMax
 
-fuel, MCR = missionFuel1(40,400,250,.45)
-print(fuel)
-print(MCR)
+# fuel, MCR = missionFuel1(40,400,250,.45)
+# print(fuel)
+# print(MCR)
