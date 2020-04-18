@@ -59,23 +59,23 @@ prob.model.add_constraint('const.Disp', upper=500)
 
 # set driver for design of experiment
 #prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
-prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=500))
-prob.driver.add_recorder(om.SqliteRecorder("musvDOE1cases.sql"))
+prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=5000))
+prob.driver.add_recorder(om.SqliteRecorder("musvDOEv2cases.sql"))
 
 prob.setup()
 prob.run_driver()
 prob.cleanup()
 
 # set up case reading
-cr = om.CaseReader("musvDOE1cases.sql")
+cr = om.CaseReader("musvDOEv2cases.sql")
 cases = cr.list_cases('driver')
 
-print(len(cases))
-
-# printing related code
-values = []
-for case in cases:
-    outputs = cr.get_case(case).outputs
-    values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['stab.GMT'], outputs['wts.Wt'], outputs['const.Disp']))
-
-print("\n".join(["Cb: %5.2f, L: %5.2f, GMT: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))
+# print(len(cases))
+#
+# # printing related code
+# values = []
+# for case in cases:
+#     outputs = cr.get_case(case).outputs
+#     values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['stab.GMT'], outputs['wts.Wt'], outputs['const.Disp']))
+#
+# print("\n".join(["Cb: %5.2f, L: %5.2f, GMT: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))

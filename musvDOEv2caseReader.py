@@ -6,7 +6,7 @@ import csv
 import matplotlib.pyplot as plt
 
 # open database of previously saved cases
-cr = om.CaseReader("musvDOE1cases.sql")
+cr = om.CaseReader("musvDOEv2cases.sql")
 
 # get a list of cases that were recorded by the driver
 cases = cr.list_cases('driver')
@@ -27,23 +27,29 @@ with open('WeightsDOE.csv', mode='w') as csv_file:
     Wt = []
     Disp = []
     Excess = []
+    GMT = []
     for case in cases:
         #read outputs from data file
         outputs = cr.get_case(case).outputs
-        #create list with values of interest for printing
-        values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['indeps.B'], outputs['indeps.T'], outputs['stab.GMT'], outputs['wts.Wt'], outputs['const.Disp']))
-        #write data in a csv (human readable)
-        writer.writerow({'Cb': outputs['indeps.Cb'],'L': outputs['indeps.L'],'B': outputs['indeps.B'],'T': outputs['indeps.T'],'GMT': outputs['stab.GMT'],'Wt': outputs['wts.Wt'],'Disp': outputs['const.Disp'],'Excess': (outputs['const.Disp']-outputs['wts.Wt'])})
 
         #read into lists
-        L.append(outputs['indeps.L'])
-        Wt.append(outputs['wts.Wt'])
-        Disp.append(outputs['const.Disp'])
-        #this is the "excess" displacement of the design
-        Excess.append(outputs['const.Disp']-outputs['wts.Wt'])
+        if outputs['stab.GMT'] > 0:
+            if abs(outputs['const.Disp']-outputs['wts.Wt']) < (0.1*outputs['wts.Wt']):
+                L.append(outputs['indeps.L'])
+                Wt.append(outputs['wts.Wt'])
+                Disp.append(outputs['const.Disp'])
+                #this is the "excess" displacement of the design
+                Excess.append(outputs['const.Disp']-outputs['wts.Wt'])
+                GMT.append(outputs['stab.GMT'])
+
+                #create list with values of interest for printing
+                values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['indeps.B'], outputs['indeps.T'], outputs['stab.GMT'], outputs['wts.Wt'], outputs['const.Disp']))
+                #write data in a csv (human readable)
+                writer.writerow({'Cb': outputs['indeps.Cb'],'L': outputs['indeps.L'],'B': outputs['indeps.B'],'T': outputs['indeps.T'],'GMT': outputs['stab.GMT'],'Wt': outputs['wts.Wt'],'Disp': outputs['const.Disp'],'Excess': (outputs['const.Disp']-outputs['wts.Wt'])})
+
 
     # print results
-    print("\n".join(["Cb: %5.2f, L: %5.2f, B: %5.2f, T: %5.2f, GMT: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))
+    # print("\n".join(["Cb: %5.2f, L: %5.2f, B: %5.2f, T: %5.2f, GMT: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))
 
 
 #---- SOME PLOTTING TESTS
@@ -78,4 +84,21 @@ plt.ylabel('Excess Displacement [MT]')
 
 # Save and close figure
 plt.savefig('L_Excess.png')
+plt.clf()
+
+# plot displacement and stability
+plt.plot(Disp, GMT, color='blue', marker='o', linewidth=0, markersize=2, label='Designs')
+plt.axhline(y=0, color='red', linewidth=2)
+plt.axhline(y=.50, color='red', linewidth=1, linestyle='dashed')
+
+
+# Create legend, labels
+plt.legend(loc='upper left')
+plt.xlim(0, 600)
+plt.ylim(-1, 3)
+plt.xlabel('Displacement [MT]')
+plt.ylabel('GMT [m]')
+
+# Save and close figure
+plt.savefig('disp_gmt.png')
 plt.clf()
