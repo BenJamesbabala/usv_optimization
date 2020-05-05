@@ -1,5 +1,7 @@
 # musvDOE1.py - modified based on http://openmdao.org/twodocs/versions/latest/features/building_blocks/drivers/doe_driver.html
 # First iteration Design of Experiment for US Navy MUSV
+# Using case reading example from http://openmdao.org/twodocs/versions/latest/basic_guide/basic_recording.html
+# Creates a .csv file with designs generated to be further processed
 
 # package, function, and class imports
 from __future__ import division, print_function
@@ -8,6 +10,7 @@ from Stability import Stability
 from Fuel import Fuel
 import openmdao.api as om
 import math
+import csv
 
 # build the model, defining units in the process`
 prob = om.Problem()
@@ -53,6 +56,9 @@ prob.model.add_design_var('const.Disp')
 # add the constraint to the model
 # this is a stability constraint to avoid nonfeasible solutions
 prob.model.add_constraint('stab.GMT', lower=0)
+prob.model.add_constraint('fuel.MCR', lower=0)
+prob.model.add_constraint('fuel.fuel', lower=0)
+
 # this is an attempt to get a wt/disp constraint
 # prob.model.add_constraint('const.Disp', lower='wts.Wt')
 prob.model.add_constraint('const.Disp', upper=500)
@@ -69,6 +75,24 @@ prob.cleanup()
 # set up case reading
 cr = om.CaseReader("musvDOEv2cases.sql")
 cases = cr.list_cases('driver')
+
+
+# setup write to CSV with outputs
+with open('WeightsDOE.csv', mode='w') as csv_file:
+    #set up CSV file to use writer
+    fieldnames = ['Cb','L','B','T','GMT','Wt','Disp','Excess','MCR','fuelWt']
+    writer = csv.writer(csv_file,  quoting=csv.QUOTE_NONNUMERIC)
+    #write header
+    writer.writerow(fieldnames)
+
+    for case in cases:
+        #read outputs from data file
+        outputs = cr.get_case(case).outputs
+
+        # write data in a csv (human readable)
+        # add float conversions
+        writer.writerow([float(outputs['indeps.Cb']),float(outputs['indeps.L']),float(outputs['indeps.B']),float(outputs['indeps.T']),float(outputs['stab.GMT']),float(outputs['wts.Wt']),float(outputs['const.Disp']),float(outputs['const.Disp']-outputs['wts.Wt']),float(outputs['fuel.MCR']),float(outputs['fuel.fuel'])])
+
 
 # print(len(cases))
 #
