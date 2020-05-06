@@ -1,11 +1,11 @@
-# musvDOEv2casePlotter.py - from
+# musvDOEv3casePlotter.py - from
 # Reads WeightsDOE.csv and plots
 
 import csv
 import matplotlib.pyplot as plt
 
 # setup write to CSV with outputs
-with open('musvDOEv2cases.csv', newline='') as csv_file:
+with open('musvDOEv3cases.csv', newline='') as csv_file:
     # read csv file
     reader = csv.reader(csv_file, quoting=csv.QUOTE_NONNUMERIC)
 
