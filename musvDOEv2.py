@@ -1,5 +1,6 @@
-# musvDOE1.py - modified based on http://openmdao.org/twodocs/versions/latest/features/building_blocks/drivers/doe_driver.html
+# musvDOEv2.py - modified based on http://openmdao.org/twodocs/versions/latest/features/building_blocks/drivers/doe_driver.html
 # First iteration Design of Experiment for US Navy MUSV
+# Uses design estimates and regressions to create a "standard vessel"
 # Using case reading example from http://openmdao.org/twodocs/versions/latest/basic_guide/basic_recording.html
 # Creates a .csv file with designs generated to be further processed
 
@@ -68,6 +69,7 @@ prob.model.add_constraint('const.Disp', upper=500)
 prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=5000))
 prob.driver.add_recorder(om.SqliteRecorder("musvDOEv2cases.sql"))
 
+# this is the meat of the OpenMDAO run
 prob.setup()
 prob.run_driver()
 prob.cleanup()
@@ -76,9 +78,8 @@ prob.cleanup()
 cr = om.CaseReader("musvDOEv2cases.sql")
 cases = cr.list_cases('driver')
 
-
 # setup write to CSV with outputs
-with open('WeightsDOE.csv', mode='w') as csv_file:
+with open('musvDOEv2cases.csv', mode='w') as csv_file:
     #set up CSV file to use writer
     fieldnames = ['Cb','L','B','T','GMT','Wt','Disp','Excess','MCR','fuelWt']
     writer = csv.writer(csv_file,  quoting=csv.QUOTE_NONNUMERIC)
@@ -92,7 +93,6 @@ with open('WeightsDOE.csv', mode='w') as csv_file:
         # write data in a csv (human readable)
         # add float conversions
         writer.writerow([float(outputs['indeps.Cb']),float(outputs['indeps.L']),float(outputs['indeps.B']),float(outputs['indeps.T']),float(outputs['stab.GMT']),float(outputs['wts.Wt']),float(outputs['const.Disp']),float(outputs['const.Disp']-outputs['wts.Wt']),float(outputs['fuel.MCR']),float(outputs['fuel.fuel'])])
-
 
 # print(len(cases))
 #
