@@ -12,11 +12,8 @@ def displacement(Cb, T, L, B) : # inputs in unitless, meters, meters, meters
     # calculate displacement
     nabla = Cb*T*L*B # volume displacement from hull parameters
     Disp = nabla*rho*(1/1000) # metric tonnes
-
-    # Estimation of wetted surface area
-
-
     return Disp
+
 
 # ---------
 def wettedSurf(Cb, T, L, B) : # inputs in unitless, meters, meters, meters

@@ -4,9 +4,12 @@
 
 import math
 
-def grubisicWts(Disp, D, T, L, B, MCR, Vk) : # inputs in metric tonnes, meters, meters, meters, meters, kilowatts, knots
+def grubisicWts(Disp, T, L, B, MCR, Vk) : # inputs in metric tonnes, meters, meters, meters, meters, kilowatts, knots
     rho = 1026.0 #kg/m^3
     g = 9.81 #m/s^2
+
+    # Approximate depth based on draft, eqn from Grubisic 2012
+    D = (2.493)*math.pow(T,0.582)
 
     # estimate surface areas
     S1 = 2.825*math.sqrt((Disp/rho)*L) #bottom
@@ -76,4 +79,4 @@ def grubisicWts(Disp, D, T, L, B, MCR, Vk) : # inputs in metric tonnes, meters, 
     #print("W: ",round(((W/1000)*0.10036),3)," long ton ")
     return W
 
-Wt = grubisicWts(.4,3,1.5,40,6,500,16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
+Wt = grubisicWts(198.56, 4.263, 26.328, 5.174, 845.16, 16)  # inputs in metric tonnes, meters, meters, meters, meters, kilowatts, knots
