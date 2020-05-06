@@ -92,8 +92,8 @@ def missionFuel1FW(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes,
 
     return fuelTot, PMax, PBCruise, PBSprint
 
-fuel, MCR, cru, spr = missionFuel1FW(26.32,189.727,198.55,.342)
-print(fuel)
-print(MCR)
-print(cru)
-print(spr)
+# fuel, MCR, cru, spr = missionFuel1FW(26.32,189.727,198.55,.342)
+# print(fuel)
+# print(MCR)
+# print(cru)
+# print(spr)

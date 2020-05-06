@@ -67,7 +67,7 @@ prob.model.add_constraint('const.Disp', upper=500)
 # set driver for design of experiment
 #prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
 prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=5000))
-prob.driver.add_recorder(om.SqliteRecorder("musvDOEv2cases.sql"))
+prob.driver.add_recorder(om.SqliteRecorder("musvDOEv3cases.sql"))
 
 # this is the meat of the OpenMDAO run
 prob.setup()

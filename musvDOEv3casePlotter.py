@@ -1,8 +1,10 @@
 # musvDOEv3casePlotter.py - from
-# Reads WeightsDOE.csv and plots
+# Reads musvDOEv3cases.csv and plots
 
 import csv
 import matplotlib.pyplot as plt
+from poweringEstimate import poweringEstimate
+from estParam import wettedSurf
 
 # setup write to CSV with outputs
 with open('musvDOEv3cases.csv', newline='') as csv_file:
@@ -24,6 +26,9 @@ with open('musvDOEv3cases.csv', newline='') as csv_file:
     MCR = [] # index = 8
     fuelWt = [] # index = 9
     percentFuel = []
+    PBcru = []
+    PBspr = []
+    PBratio = []
 
     # iterate through all designs
     for row in reader:
@@ -43,7 +48,11 @@ with open('musvDOEv3cases.csv', newline='') as csv_file:
                 MCR.append(row[8])
                 fuelWt.append(row[9])
                 percentFuel.append(row[9]/row[5])
-
+                PBcruise = poweringEstimate(row[1], wettedSurf(row[0], row[3], row[1], row[2]), row[6], row[0], 16) #kW
+                PBcru.append(PBcruise)
+                PBsprint = poweringEstimate(row[1], wettedSurf(row[0], row[3], row[1], row[2]), row[6], row[0], 27) #kW
+                PBspr.append(PBspr)
+                PBratio.append(PBsprint/PBcruise)
 
 #---- SOME PLOTS
 # plot weight and displacement
@@ -115,4 +124,23 @@ plt.ylabel('Percent of Weight that is Fuel [-]')
 
 # Save and close figure
 plt.savefig('fuel_mcr.png')
+plt.clf()
+
+#----
+# plot displacement and power ratio
+plt.plot(Disp, PBratio, color='blue', marker='o', linewidth=0, markersize=2, label='Designs')
+plt.axhline(y=1, color='green', linewidth=1, linestyle='dashed', label='10%')
+plt.axhline(y=3, color='orange', linewidth=1, linestyle='dashed', label='30%')
+plt.axhline(y=5, color='red', linewidth=1, linestyle='dashed', label='50%')
+
+
+# Create legend, labels
+plt.legend(loc='upper left')
+plt.xlim(0, 1000)
+plt.ylim(0, 10)
+plt.xlabel('MCR [kW]')
+plt.ylabel('Percent of Weight that is Fuel [-]')
+
+# Save and close figure
+plt.savefig('disp_powratio.png')
 plt.clf()
