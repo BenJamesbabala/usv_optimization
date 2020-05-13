@@ -47,7 +47,7 @@ prob.model.add_design_var('indeps.Cb', lower=0.31, upper=0.59)
 prob.model.add_design_var('indeps.T', lower=2, upper=5)
 prob.model.add_design_var('indeps.L', lower=25, upper=50)
 prob.model.add_design_var('indeps.B', lower=3, upper=12)
-prob.model.add_design_var('indeps.fwCap', lower=100, upper=800)
+prob.model.add_design_var('indeps.fwCap', lower=10, upper=1000)
 prob.model.add_design_var('wts.Wt')
 prob.model.add_design_var('const.Disp')
 
@@ -67,7 +67,7 @@ prob.model.add_constraint('fuel.nStarts', lower=0)
 
 # set driver for design of experiment
 #prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
-prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=50))
+prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=10000))
 prob.driver.add_recorder(om.SqliteRecorder("musvDOEv3cases.sql"))
 
 # this is the meat of the OpenMDAO run
