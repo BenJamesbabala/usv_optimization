@@ -21,6 +21,7 @@ indeps.add_output('Cb', 0.31) #unitless
 indeps.add_output('T', 2, units='m') #meters
 indeps.add_output('L', 20, units='m') #meters
 indeps.add_output('B', 5, units='m') #meters
+indeps.add_output('fwCap', 300, units='MJ') #meters
 
 # add the fuel weight component from Fuel.py
 prob.model.add_subsystem('fuel', Fuel())
@@ -46,6 +47,7 @@ prob.model.add_design_var('indeps.Cb', lower=0.31, upper=0.59)
 prob.model.add_design_var('indeps.T', lower=2, upper=5)
 prob.model.add_design_var('indeps.L', lower=25, upper=50)
 prob.model.add_design_var('indeps.B', lower=3, upper=12)
+prob.model.add_design_var('indeps.fwCap', lower=100, upper=800)
 prob.model.add_design_var('wts.Wt')
 prob.model.add_design_var('const.Disp')
 
@@ -56,17 +58,16 @@ prob.model.add_design_var('const.Disp')
 
 # add the constraint to the model
 # this is a stability constraint to avoid nonfeasible solutions
+# with DOEDriver, these constraints don't affect much, but they force OpenMDAO to calculate the values
 prob.model.add_constraint('stab.GMT', lower=0)
 prob.model.add_constraint('fuel.MCR', lower=0)
 prob.model.add_constraint('fuel.fuel', lower=0)
-
-# this is an attempt to get a wt/disp constraint
-# prob.model.add_constraint('const.Disp', lower='wts.Wt')
-prob.model.add_constraint('const.Disp', upper=500)
+prob.model.add_constraint('fuel.etaRun', lower=0)
+prob.model.add_constraint('fuel.nStarts', lower=0)
 
 # set driver for design of experiment
 #prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
-prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=5000))
+prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=50))
 prob.driver.add_recorder(om.SqliteRecorder("musvDOEv3cases.sql"))
 
 # this is the meat of the OpenMDAO run
@@ -81,7 +82,7 @@ cases = cr.list_cases('driver')
 # setup write to CSV with outputs
 with open('musvDOEv3cases.csv', mode='w') as csv_file:
     #set up CSV file to use writer
-    fieldnames = ['Cb','L','B','T','GMT','Wt','Disp','Excess','MCR','fuelWt']
+    fieldnames = ['Cb','L','B','T','FlywheelCapacity','GMT','Wt','Disp','Excess','MCR','fuelWt','etaRun','nStarts']
     writer = csv.writer(csv_file,  quoting=csv.QUOTE_NONNUMERIC)
     #write header
     writer.writerow(fieldnames)
@@ -92,7 +93,7 @@ with open('musvDOEv3cases.csv', mode='w') as csv_file:
 
         # write data in a csv (human readable)
         # add float conversions
-        writer.writerow([float(outputs['indeps.Cb']),float(outputs['indeps.L']),float(outputs['indeps.B']),float(outputs['indeps.T']),float(outputs['stab.GMT']),float(outputs['wts.Wt']),float(outputs['const.Disp']),float(outputs['const.Disp']-outputs['wts.Wt']),float(outputs['fuel.MCR']),float(outputs['fuel.fuel'])])
+        writer.writerow([float(outputs['indeps.Cb']),float(outputs['indeps.L']),float(outputs['indeps.B']),float(outputs['indeps.T']),float(outputs['indeps.fwCap']),float(outputs['stab.GMT']),float(outputs['wts.Wt']),float(outputs['const.Disp']),float(outputs['const.Disp']-outputs['wts.Wt']),float(outputs['fuel.MCR']),float(outputs['fuel.fuel']),float(outputs['fuel.etaRun']),float(outputs['fuel.nStarts'])])
 
 # print(len(cases))
 #

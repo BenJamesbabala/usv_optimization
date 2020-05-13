@@ -66,7 +66,7 @@ def missionFuel1FW(L, S, Disp, Cb, fwCap) : #inputs in meters, meters^2, metric 
     hoursComm = (days*2)
     hoursCruise = (range/vCruise)
     hoursLoiter = hoursTot - (hoursSprint+hoursComm+hoursCruise)
-    powSleep = 50 #kW
+    powSleep = 5 #kW
     powNorm = 300 #kW
     powMax = 500 #kW
     SFC = 0.000196 #t/kWhr
@@ -84,9 +84,9 @@ def missionFuel1FW(L, S, Disp, Cb, fwCap) : #inputs in meters, meters^2, metric 
     PMax = max(PSprint, PComm, PCruise, PLoiter) #kW
 
     # calculate flywheel charge/discharge times
-    tChg = (fwCap*1000000)/((PCruise - PLoiter)*1000) #seconds
-    tDischg = (fwCap*1000000)/(PLoiter*1000) #seconds
-    etaRun = tChg/(tChg + tDischg) #unitless
+    tChg = (fwCap*1000000)/(((PCruise - PLoiter)*1000)) # seconds
+    tDischg = (fwCap*1000000)/((PLoiter*1000))# seconds
+    etaRun = tChg/(tChg + tDischg) # unitless
 
     # calculate flywheel starts
     nStarts = (hoursLoiter*60*60)/(tChg + tDischg) # unitless
