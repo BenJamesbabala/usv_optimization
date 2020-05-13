@@ -2,6 +2,7 @@
 
 import math
 from poweringEstimate import poweringEstimate
+from flywheelWeight import convertToE, fwWgt
 
 # fuel estimation based on hypothetical mission profile
 # define alternative missions with new functions
@@ -50,7 +51,7 @@ def missionFuel1(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes, u
     return fuelTot, PMax
 
 # Initial Mission Analysis WITH FLYWHEELS
-def missionFuel1FW(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes, unitless
+def missionFuel1FW(L, S, Disp, Cb, fwCap) : #inputs in meters, meters^2, metric tonnes, unitless, megajoules
     # constants
     rho = 1026.0 #kg/m^3
     g = 9.81 #m/s^2
@@ -82,18 +83,29 @@ def missionFuel1FW(L, S, Disp, Cb) : #inputs in meters, meters^2, metric tonnes,
 
     PMax = max(PSprint, PComm, PCruise, PLoiter) #kW
 
+    # calculate flywheel charge/discharge times
+    tChg = (fwCap*1000000)/((PCruise - PLoiter)*1000) #seconds
+    tDischg = (fwCap*1000000)/(PLoiter*1000) #seconds
+    etaRun = tChg/(tChg + tDischg) #unitless
+
+    # calculate flywheel starts
+    nStarts = (hoursLoiter*60*60)/(tChg + tDischg) # unitless
+
     # calculate fuel consumption
     fuelSprint = SFC*PSprint*hoursSprint #t
     fuelComm = SFC*PComm*hoursComm #t
     fuelCruise = SFC*PCruise*hoursCruise #t
-    fuelLoiter = SFC*PLoiter*hoursLoiter #t
+    fuelLoiter = SFC*PLoiter*(hoursLoiter*etaRun) #t
 
-    fuelTot = fuelSprint + fuelComm + fuelCruise + fuelLoiter
+    fuelTot = fuelSprint + fuelComm + fuelCruise + fuelLoiter + fwWgt(fwCap)
 
-    return fuelTot, PMax, PBCruise, PBSprint
+    return fuelTot, PMax, etaRun, nStarts
+    #return fuelTot, PMax, PBCruise, PBSprint, etaRun, nStarts
 
-# fuel, MCR, cru, spr = missionFuel1FW(26.32,189.727,198.55,.342)
-# print(fuel)
-# print(MCR)
-# print(cru)
-# print(spr)
+# fuel, MCR, cru, spr, run, starts = missionFuel1FW(26.32,189.727,198.55,.342,300)
+# print("Fuel Wt: ", round(fuel,4), " MT")
+# print("Max MCR: ", round(MCR,4), " kW")
+# print("Cruise MCR: ", round(cru,4), " kW")
+# print("Sprint MCR: ", round(spr,4), " kW")
+# print("Runtime: ", round(run*100,4), " %")
+# print("Starts: ", round(starts,2), " -")
