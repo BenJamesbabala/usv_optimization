@@ -16,16 +16,16 @@ class Fuel(om.ExplicitComponent):
 
     # setup input and output variables for the component
     def setup(self) :
-        self.add_input('L', val=0.0, units='m')
-        self.add_input('B', val=0.0, units='m')
-        self.add_input('T', val=0.0, units='m')
-        self.add_input('Cb', val=0.0)
-        self.add_input('fwCap', val=0.001, units='MJ') #unit is megajoules, val set to 0.001 to avoid divide by zero
+        self.add_input('L', units='m')
+        self.add_input('B', units='m')
+        self.add_input('T', units='m')
+        self.add_input('Cb')
+        self.add_input('fwCap', units='MJ')
 
-        self.add_output('fuel', val=0.0, units='t')
-        self.add_output('MCR', val=0.0, units='kW')
-        self.add_output('etaRun', val=0.0)
-        self.add_output('nStarts', val=0.0)
+        self.add_output('fuel', units='t')
+        self.add_output('MCR', units='kW')
+        self.add_output('etaRun')
+        self.add_output('nStarts')
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')

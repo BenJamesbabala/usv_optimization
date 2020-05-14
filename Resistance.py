@@ -15,13 +15,13 @@ class Resistance(om.ExplicitComponent):
 
     # setup input and output variables for the component
     def setup(self) :
-        self.add_input('L', val=0.0, units='m')
-        self.add_input('S', val=0.0, units='m*m')
-        self.add_input('Displ', val=0.0, units='t')
-        self.add_input('Cb', val=0.0)
-        #self.add_input('Vk', val=0.0, units='kn') - Ignoring Vk because we do not intend for velocity to vary during an optimization
+        self.add_input('L', units='m')
+        self.add_input('S', units='m*m')
+        self.add_input('Displ', units='t')
+        self.add_input('Cb')
+        #self.add_input('Vk', units='kn') - Ignoring Vk because we do not intend for velocity to vary during an optimization
 
-        self.add_output('R', val=0.0, units='N')
+        self.add_output('R', units='N')
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')

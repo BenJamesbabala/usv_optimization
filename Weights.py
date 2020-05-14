@@ -15,16 +15,16 @@ class Weights(om.ExplicitComponent):
     # setup input and output variables for the component
     def setup(self) :
         #setup inputs or variables needed for function
-        self.add_input('Cb', val=0.0)
-        #self.add_input('D', val=0.0, units='m') - Depth implicitly calculated in grubisicWeights
-        self.add_input('T', val=0.0, units='m')
-        self.add_input('L', val=0.0, units='m')
-        self.add_input('B', val=0.0, units='m')
-        #self.add_input('MCR', val=0.0, units='kW') - Fixing power as it is an objective in RFP
-        #self.add_input('Vk', val=0.0, units='kn') - Ignoring Vk because we do not intend for velocity to vary during an optimization
+        self.add_input('Cb')
+        #self.add_input('D', units='m') - Depth implicitly calculated in grubisicWeights
+        self.add_input('T', units='m')
+        self.add_input('L', units='m')
+        self.add_input('B', units='m')
+        #self.add_input('MCR', units='kW') - Fixing power as it is an objective in RFP
+        #self.add_input('Vk', units='kn') - Ignoring Vk because we do not intend for velocity to vary during an optimization
 
 
-        self.add_output('Wt', val=0.0, units='t')
+        self.add_output('Wt', units='t')
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
@@ -51,15 +51,15 @@ class WeightsNoFuel(om.ExplicitComponent):
     # setup input and output variables for the component
     def setup(self) :
         #setup inputs or variables needed for function
-        self.add_input('Cb', val=0.0)
-        self.add_input('T', val=0.0, units='m')
-        self.add_input('L', val=0.0, units='m')
-        self.add_input('B', val=0.0, units='m')
-        self.add_input('MCR', val=0.0, units='kW')
-        self.add_input('fuel', val=0.0, units='t')
+        self.add_input('Cb')
+        self.add_input('T', units='m')
+        self.add_input('L', units='m')
+        self.add_input('B', units='m')
+        self.add_input('MCR', units='kW')
+        self.add_input('fuel', units='t')
 
 
-        self.add_output('Wt', val=0.0, units='t')
+        self.add_output('Wt', units='t')
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')

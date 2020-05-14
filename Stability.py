@@ -15,12 +15,12 @@ class Stability(om.ExplicitComponent):
     # setup input and output variables for the component
     def setup(self) :
         #setup inputs or variables needed for function
-        self.add_input('Cb', val=0.0)
-        self.add_input('T', val=0.0, units='m')
-        self.add_input('L', val=0.0, units='m')
-        self.add_input('B', val=0.0, units='m')
+        self.add_input('Cb')
+        self.add_input('T', units='m')
+        self.add_input('L', units='m')
+        self.add_input('B', units='m')
 
-        self.add_output('GMT', val=0.0, units='m')
+        self.add_output('GMT', units='m')
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
