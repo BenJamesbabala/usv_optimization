@@ -47,7 +47,7 @@ prob.model.add_design_var('indeps.Cb', lower=0.31, upper=0.59)
 prob.model.add_design_var('indeps.T', lower=2, upper=5)
 prob.model.add_design_var('indeps.L', lower=25, upper=50)
 prob.model.add_design_var('indeps.B', lower=3, upper=12)
-prob.model.add_design_var('indeps.fwCap', lower=10, upper=1000)
+prob.model.add_design_var('indeps.fwCap', lower=0, upper=1000)
 prob.model.add_design_var('wts.Wt')
 prob.model.add_design_var('const.Disp')
 

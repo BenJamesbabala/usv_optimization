@@ -101,23 +101,40 @@ with open('musvDOEv3cases.csv', newline='') as csv_file:
 # # plt.clf()
 
 #-----
-# plot MCR and engine starts
-plt.plot(MCR, nStarts, color='blue', marker='o', linewidth=0, markersize=2, label='Designs')
-#plt.axhline(y=0.5, color='green', linewidth=1, linestyle='dashed', label='0.5%')
-#plt.axhline(y=1, color='orange', linewidth=1, linestyle='dashed', label='1%')
-#plt.axhline(y=2, color='red', linewidth=1, linestyle='dashed', label='2%')
+# # plot MCR and engine starts and runtime
+# fig, ax1 = plt.subplots()
+# ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+#
+# ax1.plot(PBcru, nStarts, color='blue', marker='o', linewidth=0, markersize=2, label='Starts')
+# ax2.plot(PBcru, etaRun, color='red', marker='o', linewidth=0, markersize=2, label='Runtime')
+#
+# # Create legend, labels
+# fig.legend(loc='upper left')
+# #plt.xlim(0, 2000)
+# #plt.ylim(0, 3)
+# ax1.set_xlabel('Cruise MCR [kW]')
+# ax1.set_ylabel('Loitering Engine Starts [-]')
+# ax2.set_ylabel('Loitering Engine Runtime [%]')
+#
+#
+# # Save and close figure
+# plt.show()
+# # plt.savefig('Wt_Disp.png')
+# # plt.clf()
 
-# Create legend, labels
-plt.legend(loc='upper left')
-#plt.yscale("log")
-plt.xlim(0, 10000)
-#plt.ylim(0, 3)
-plt.xlabel('MCR [kW]')
-plt.ylabel('Loitering Engine Starts [-]')
-
-# Save and close figure
-plt.show()
-# plt.savefig('Wt_Disp.png')
+#-----
+# # plot number of starts and runtime percentage
+# plt.plot(nStarts, etaRun, color='blue', marker='o', linewidth=0, markersize=2, label='Designs')
+#
+# # Create legend, labels
+# plt.legend(loc='upper left')
+# #plt.xlim(100, 600)
+# #plt.ylim(100, 600)
+# plt.xlabel('Number of Starts [-]')
+# plt.ylabel('Runtime [%]')
+#
+# # Save and close figure
+# plt.savefig('starts_runtime.png')
 # plt.clf()
 
 #-----
