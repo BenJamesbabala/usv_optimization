@@ -105,10 +105,11 @@ def missionFuel1FW(L, S, Disp, Cb, fwCap) : #inputs in meters, meters^2, metric 
     return fuelTot, PMax, etaRun, nStarts
     #return fuelTot, PMax, PBCruise, PBSprint, etaRun, nStarts
 
-# fuel, MCR, cru, spr, run, starts = missionFuel1FW(26.32,189.727,198.55,.342,300)
+# #fuel, MCR, cru, spr, run, starts = missionFuel1FW(26.32,189.727,198.55,.342,1000) #missionFuel1FW(L, S, Disp, Cb, fwCap) inputs in meters, meters^2, metric tonnes, unitless, megajoules
+# fuel, MCR, run, starts = missionFuel1FW(26.32,189.727,198.55,.342,1000) #missionFuel1FW(L, S, Disp, Cb, fwCap) inputs in meters, meters^2, metric tonnes, unitless, megajoules
 # print("Fuel Wt: ", round(fuel,4), " MT")
 # print("Max MCR: ", round(MCR,4), " kW")
-# print("Cruise MCR: ", round(cru,4), " kW")
-# print("Sprint MCR: ", round(spr,4), " kW")
+# #print("Cruise MCR: ", round(cru,4), " kW")
+# #print("Sprint MCR: ", round(spr,4), " kW")
 # print("Runtime: ", round(run*100,4), " %")
 # print("Starts: ", round(starts,2), " -")

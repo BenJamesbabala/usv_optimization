@@ -21,7 +21,7 @@ indeps.add_output('Cb', 0.31) #unitless
 indeps.add_output('T', 2, units='m') #meters
 indeps.add_output('L', 20, units='m') #meters
 indeps.add_output('B', 5, units='m') #meters
-indeps.add_output('fwCap', 300, units='MJ') #meters
+indeps.add_output('fwCap', 300, units='MJ') #megajoules
 
 # add the fuel weight component from Fuel.py
 prob.model.add_subsystem('fuel', Fuel())
@@ -32,7 +32,7 @@ prob.model.add_subsystem('stab',Stability())
 
 # define component whose output will be constrained
 # units defined, excess represents the 'excess' displacement of the design
-prob.model.add_subsystem('const', om.ExecComp('Disp=Cb*T*L*B', Disp={'units': 't'}, T={'units': 'm'}, L={'units': 'm'}, B={'units': 'm'}))
+prob.model.add_subsystem('const', om.ExecComp('Disp=1.026*Cb*T*L*B', Disp={'units': 't'}, T={'units': 'm'}, L={'units': 'm'}, B={'units': 'm'}))
 
 #connect components
 prob.model.connect('indeps.Cb', ['wts.Cb', 'stab.Cb', 'fuel.Cb', 'const.Cb'])
@@ -40,7 +40,7 @@ prob.model.connect('indeps.T', ['wts.T', 'stab.T', 'fuel.T', 'const.T'])
 prob.model.connect('indeps.L', ['wts.L', 'stab.L', 'fuel.L', 'const.L'])
 prob.model.connect('indeps.B', ['wts.B', 'stab.B', 'fuel.B', 'const.B'])
 prob.model.connect('fuel.MCR', 'wts.MCR')
-prob.model.connect('fuel.fuel', 'wts.fuel')
+prob.model.connect('fuel.fuelWt', 'wts.fuelWt')
 
 # set the range for the independent variables that will be explored
 prob.model.add_design_var('indeps.Cb', lower=0.31, upper=0.59)
@@ -48,26 +48,25 @@ prob.model.add_design_var('indeps.T', lower=2, upper=5)
 prob.model.add_design_var('indeps.L', lower=25, upper=50)
 prob.model.add_design_var('indeps.B', lower=3, upper=12)
 prob.model.add_design_var('indeps.fwCap', lower=0, upper=1000)
+# add these variables to be calculated for each design
 prob.model.add_design_var('wts.Wt')
 prob.model.add_design_var('const.Disp')
 
+prob.model.add_design_var('stab.GMT')
+prob.model.add_design_var('fuel.fuelWt')
+prob.model.add_design_var('fuel.MCR')
+prob.model.add_design_var('fuel.etaRun')
+prob.model.add_design_var('fuel.nStarts')
+
+# OBJECTIVES NOT USED WITH DOEDriver
 # set objective to be minimizing weight
 # prob.model.add_objective('wts.Wt')
 # set objective to be minimizing excess displacement
 # prob.model.add_objective('const.excess')
 
-# add the constraint to the model
-# this is a stability constraint to avoid nonfeasible solutions
-# with DOEDriver, these constraints don't affect much, but they force OpenMDAO to calculate the values
-prob.model.add_constraint('stab.GMT', lower=0)
-prob.model.add_constraint('fuel.MCR', lower=0)
-prob.model.add_constraint('fuel.fuel', lower=0)
-prob.model.add_constraint('fuel.etaRun', lower=0)
-prob.model.add_constraint('fuel.nStarts', lower=0)
-
 # set driver for design of experiment
 #prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
-prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=10000))
+prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=100))
 prob.driver.add_recorder(om.SqliteRecorder("musvDOEv3cases.sql"))
 
 # this is the meat of the OpenMDAO run
@@ -93,7 +92,7 @@ with open('musvDOEv3cases.csv', mode='w') as csv_file:
 
         # write data in a csv (human readable)
         # add float conversions
-        writer.writerow([float(outputs['indeps.Cb']),float(outputs['indeps.L']),float(outputs['indeps.B']),float(outputs['indeps.T']),float(outputs['indeps.fwCap']),float(outputs['stab.GMT']),float(outputs['wts.Wt']),float(outputs['const.Disp']),float(outputs['const.Disp']-outputs['wts.Wt']),float(outputs['fuel.MCR']),float(outputs['fuel.fuel']),float(outputs['fuel.etaRun']),float(outputs['fuel.nStarts'])])
+        writer.writerow([float(outputs['indeps.Cb']),float(outputs['indeps.L']),float(outputs['indeps.B']),float(outputs['indeps.T']),float(outputs['indeps.fwCap']),float(outputs['stab.GMT']),float(outputs['wts.Wt']),float(outputs['const.Disp']),float(outputs['const.Disp']-outputs['wts.Wt']),float(outputs['fuel.MCR']),float(outputs['fuel.fuelWt']),float(outputs['fuel.etaRun']),float(outputs['fuel.nStarts'])])
 
 # print(len(cases))
 #
