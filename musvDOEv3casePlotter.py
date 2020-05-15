@@ -61,7 +61,7 @@ with open('musvDOEv3cases.csv', newline='') as csv_file:
                     fuelWt.append(row[10])
                     etaRun.append((row[11]*100)) #convert to percentage
                     nStarts.append(row[12])
-                    percentFuel.append(row[10]/row[6])
+                    percentFuel.append((row[10]/row[6])*100)  #convert to percentage
                     PBcru.append(PBcruise)
                     PBspr.append(PBspr)
                     PBratio.append(PBsprint/PBcruise)
@@ -159,8 +159,8 @@ plt.plot(nStarts, etaRun, color='blue', marker='o', linewidth=0, markersize=2, l
 
 # Create legend, labels
 plt.legend(loc='upper left')
-#plt.xlim(100, 600)
-#plt.ylim(100, 600)
+plt.xlim(0, 200)
+plt.ylim(0, 1.2)
 plt.xlabel('Number of Starts [-]')
 plt.ylabel('Runtime [%]')
 
@@ -195,7 +195,7 @@ plt.axhline(y=50, color='red', linewidth=1, linestyle='dashed')
 # Create legend, labels
 plt.legend(loc='upper left')
 plt.xlim(20, 55)
-plt.ylim(-100, 300)
+plt.ylim(-100, 100)
 plt.xlabel('Length [m]')
 plt.ylabel('Excess Displacement [MT]')
 
@@ -212,8 +212,8 @@ plt.axhline(y=.50, color='red', linewidth=1, linestyle='dashed')
 
 # Create legend, labels
 plt.legend(loc='upper left')
-plt.xlim(0, 600)
-plt.ylim(-1, 3)
+plt.xlim(0, 800)
+plt.ylim(-.25, 4)
 plt.xlabel('Displacement [MT]')
 plt.ylabel('GMT [m]')
 
@@ -223,17 +223,17 @@ plt.clf()
 
 #----
 # plot fuel weight and MCR
-plt.plot(MCR, percentFuel, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-plt.axhline(y=.1, color='green', linewidth=1, linestyle='dashed', label='10%')
-plt.axhline(y=.3, color='orange', linewidth=1, linestyle='dashed', label='30%')
-plt.axhline(y=.5, color='red', linewidth=1, linestyle='dashed', label='50%')
+plt.plot(PBcru, percentFuel, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.axhline(y=10, color='green', linewidth=1, linestyle='dashed', label='10%')
+plt.axhline(y=30, color='orange', linewidth=1, linestyle='dashed', label='30%')
+plt.axhline(y=50, color='red', linewidth=1, linestyle='dashed', label='50%')
 
 
 # Create legend, labels
 plt.legend(loc='upper left')
-plt.xlim(0, 2000)
-plt.ylim(0, 0.8)
-plt.xlabel('MCR [kW]')
+#plt.xlim(0, 2000)
+plt.ylim(0, 80)
+plt.xlabel('Cruise MCR [kW]')
 plt.ylabel('Percent of Weight that is Fuel [-]')
 
 # Save and close figure
@@ -242,7 +242,7 @@ plt.clf()
 
 #----
 # plot displacement and power ratio
-plt.plot(Disp, PBratio, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.plot(PBcru, PBratio, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
 plt.axhline(y=1, color='green', linewidth=1, linestyle='dashed', label='Equal')
 plt.axhline(y=1.5, color='orange', linewidth=1, linestyle='dashed', label='1.5 times')
 plt.axhline(y=2, color='red', linewidth=1, linestyle='dashed', label='2 times')
@@ -250,11 +250,11 @@ plt.axhline(y=2, color='red', linewidth=1, linestyle='dashed', label='2 times')
 
 # Create legend, labels
 plt.legend(loc='lower left')
-plt.xlim(0, 1000)
+#plt.xlim(0, 2000)
 plt.ylim(0, 2.5)
-plt.xlabel('MCR [kW]')
+plt.xlabel('Cruise MCR [kW]')
 plt.ylabel('Sprint to Cruise Power Ratio [-]')
 
 # Save and close figure
-plt.savefig('disp_powratio.png')
+plt.savefig('mcr_powratio.png')
 plt.clf()

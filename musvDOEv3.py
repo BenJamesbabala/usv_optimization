@@ -24,7 +24,7 @@ indeps.add_output('B', 5, units='m') #meters
 indeps.add_output('fwCap', 300, units='MJ') #megajoules
 
 # add the fuel weight component from Fuel.py
-prob.model.add_subsystem('fuel', Fuel()) #, promotes=['Cb','T','L','B','fuelWt','MCR','etaRun','nStarts'])
+prob.model.add_subsystem('fuel', Fuel())
 # add the weights component from Weights.py
 prob.model.add_subsystem('wts', WeightsNoFuel())
 # add the stability component from Stability.py
@@ -58,12 +58,6 @@ prob.model.add_design_var('fuel.fuelWt')
 prob.model.add_design_var('fuel.MCR')
 prob.model.add_design_var('fuel.etaRun')
 prob.model.add_design_var('fuel.nStarts')
-
-# OBJECTIVES NOT USED WITH DOEDriver
-# set objective to be minimizing weight
-# prob.model.add_objective('wts.Wt')
-# set objective to be minimizing excess displacement
-# prob.model.add_objective('const.excess')
 
 # set driver for design of experiment
 #prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=10000))
