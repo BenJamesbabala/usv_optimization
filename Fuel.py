@@ -52,11 +52,11 @@ if __name__ == "__main__":
     #setup independent variables, will be chosen
     #units defined within OpenMDAO for completeness
     ivc = om.IndepVarComp()
-    ivc.add_output('L', 35.8, units='m') #meters
-    ivc.add_output('B', 6.08, units='m') #meters
-    ivc.add_output('T', 2.85, units='m') #meters
-    ivc.add_output('Cb', 0.42) #unitless
-    ivc.add_output('fwCap', 782, units='MJ') #megajoules
+    ivc.add_output('L', 45.14, units='m') #meters
+    ivc.add_output('B', 4.234, units='m') #meters
+    ivc.add_output('T', 3.105, units='m') #meters
+    ivc.add_output('Cb', 0.354) #unitless
+    ivc.add_output('fwCap', 630, units='MJ') #megajoules
 
     #define subsystems to reference variables
     model.add_subsystem('des_vars', ivc)

@@ -33,6 +33,9 @@ with open('musvDOEv3cases.csv', newline='') as csv_file:
     PBcru = []
     PBspr = []
     PBratio = []
+    LB = []
+    BT = []
+    TL = []
 
     # iterate through all designs
     for row in reader:
@@ -62,35 +65,47 @@ with open('musvDOEv3cases.csv', newline='') as csv_file:
                     PBcru.append(PBcruise)
                     PBspr.append(PBspr)
                     PBratio.append(PBsprint/PBcruise)
+                    LB.append(row[1]/row[2])
+                    BT.append(row[2]/row[3])
+                    TL.append(row[3]/row[1])
 
     numFeasible = len(Cb)
 
 #---- SOME PLOTS
-# test of 3D plotting
+# # test of 3D plotting
 # fig = plt.figure()
 # ax = fig.add_subplot(111, projection='3d')
-# ax.scatter(L, MCR, fwCap)
-#
-# ax.set_xlabel('Length [m]')
-# ax.set_ylabel('MCR [kW]')
-# ax.set_zlabel('Flywheel Size [MJ]')
+# # # --- dimension ratios
+# # ax.scatter(LB, BT, TL)
+# #
+# # ax.set_xlabel('L/B [-]')
+# # ax.set_ylabel('B/T [-]')
+# # ax.set_zlabel('T/L [-]')
+# # # --- MCR, etaRun, nStarts
+# # ax.scatter(PBcru, etaRun, nStarts)
+# #
+# # ax.set_xlabel('Cruise MCR [kW]')
+# # ax.set_ylabel('Runtime [%]')
+# # ax.set_zlabel('Num. Starts [-]')
 #
 # plt.show()
-
-# # Save and close figure
-# plt.savefig('Wt_Disp.png')
-# plt.clf()
+#
+# # # Save and close figure
+# # plt.savefig('Wt_Disp.png')
+# # plt.clf()
 
 
 #-----
 # plot flywheel capacity and engine starts
 plt.plot(fwCap, nStarts, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.axhline(y=0, color='black', linewidth=1)
+plt.axhline(y=50, color='red', linewidth=1, linestyle='dashed', label='50 Starts')
 
 # Create legend, labels
-plt.legend(loc='upper left')
+plt.legend(loc='upper right')
 #plt.xscale("log")
 #plt.xlim(0, 1100)
-plt.ylim(17200, 18000)
+#plt.ylim(17200, 18000)
 plt.xlabel('FESD Capacity [MJ]')
 plt.ylabel('Loitering Engine Starts [-]')
 
@@ -98,148 +113,148 @@ plt.ylabel('Loitering Engine Starts [-]')
 plt.savefig('fwCap_nStarts.png')
 plt.clf()
 
-# #-----
-# # plot flywheel capacity and engine runtime
-# plt.plot(fwCap, etaRun, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-# plt.axhline(y=0.1, color='green', linewidth=1, linestyle='dashed', label='0.1%')
-# plt.axhline(y=0.5, color='orange', linewidth=1, linestyle='dashed', label='0.5%')
-# plt.axhline(y=1, color='red', linewidth=1, linestyle='dashed', label='1.0%')
-#
-# # Create legend, labels
-# plt.legend(loc='upper left')
-# #plt.xscale("log")
-# #plt.xlim(0, 1100)
-# plt.ylim(0, 2)
-# plt.xlabel('FESD Capacity [MJ]')
-# plt.ylabel('Loitering Engine Runtime [%]')
-#
-# # Save and close figure
-# plt.savefig('fwCap_etaRun.png')
-# plt.clf()
-#
-# #-----
-# # plot MCR and engine starts and runtime
-# fig, ax1 = plt.subplots()
-# ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-#
-# ax1.plot(PBcru, nStarts, color='blue', marker='o', linewidth=0, markersize=2, label='Starts')
-# ax2.plot(PBcru, etaRun, color='red', marker='o', linewidth=0, markersize=2, label='Runtime')
-#
-# # Create legend, labels
-# fig.legend(loc='upper left')
-# #plt.xlim(0, 2000)
-# #plt.ylim(0, 3)
-# ax1.set_xlabel('Cruise MCR [kW]')
-# ax1.set_ylabel('Loitering Engine Starts [-]')
-# ax2.set_ylabel('Loitering Engine Runtime [%]')
-#
-#
-# # Save and close figure
-# plt.savefig('nStarts_etaRun_1.png')
-# plt.clf()
-#
-# #-----
-# # plot number of starts and runtime percentage
-# plt.plot(nStarts, etaRun, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-#
-# # Create legend, labels
-# plt.legend(loc='upper left')
-# #plt.xlim(100, 600)
-# #plt.ylim(100, 600)
-# plt.xlabel('Number of Starts [-]')
-# plt.ylabel('Runtime [%]')
-#
-# # Save and close figure
-# plt.savefig('nStarts_etaRun_2.png')
-# plt.clf()
-#
-# #-----
-# # plot weight and displacement
-# plt.plot(Wt, Disp, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-# plt.plot(Wt, Wt, label='Equal', color='red', linewidth=2)
-#
-# # Create legend, labels
-# plt.legend(loc='upper left')
-# plt.xlim(100, 600)
-# plt.ylim(100, 600)
-# plt.xlabel('Weight [MT]')
-# plt.ylabel('Displacement [MT]')
-#
-# # Save and close figure
-# plt.savefig('Wt_Disp.png')
-# plt.clf()
-#
-# #-----
-# # plot length and "excess" displacement
-# plt.plot(L, Excess, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-# plt.axhline(y=0, color='red', linewidth=2)
-# plt.axhline(y=-50, color='red', linewidth=1, linestyle='dashed')
-# plt.axhline(y=50, color='red', linewidth=1, linestyle='dashed')
-#
-#
-# # Create legend, labels
-# plt.legend(loc='upper left')
-# plt.xlim(20, 55)
-# plt.ylim(-100, 300)
-# plt.xlabel('Length [m]')
-# plt.ylabel('Excess Displacement [MT]')
-#
-# # Save and close figure
-# plt.savefig('L_Excess.png')
-# plt.clf()
-#
-# #-----
-# # plot displacement and stability
-# plt.plot(Disp, GMT, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-# plt.axhline(y=0, color='red', linewidth=2)
-# plt.axhline(y=.50, color='red', linewidth=1, linestyle='dashed')
-#
-#
-# # Create legend, labels
-# plt.legend(loc='upper left')
-# plt.xlim(0, 600)
-# plt.ylim(-1, 3)
-# plt.xlabel('Displacement [MT]')
-# plt.ylabel('GMT [m]')
-#
-# # Save and close figure
-# plt.savefig('disp_gmt.png')
-# plt.clf()
-#
-# #----
-# # plot fuel weight and MCR
-# plt.plot(MCR, percentFuel, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-# plt.axhline(y=.1, color='green', linewidth=1, linestyle='dashed', label='10%')
-# plt.axhline(y=.3, color='orange', linewidth=1, linestyle='dashed', label='30%')
-# plt.axhline(y=.5, color='red', linewidth=1, linestyle='dashed', label='50%')
-#
-#
-# # Create legend, labels
-# plt.legend(loc='upper left')
-# plt.xlim(0, 2000)
-# plt.ylim(0, 0.8)
-# plt.xlabel('MCR [kW]')
-# plt.ylabel('Percent of Weight that is Fuel [-]')
-#
-# # Save and close figure
-# plt.savefig('fuel_mcr.png')
-# plt.clf()
-#
-# #----
-# # plot displacement and power ratio
-# plt.plot(Disp, PBratio, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-# plt.axhline(y=1, color='green', linewidth=1, linestyle='dashed', label='Equal')
-# plt.axhline(y=1.5, color='orange', linewidth=1, linestyle='dashed', label='1.5 times')
-# plt.axhline(y=2, color='red', linewidth=1, linestyle='dashed', label='2 times')
-#
-#
-# # Create legend, labels
-# plt.legend(loc='lower left')
-# plt.xlim(0, 1000)
-# plt.ylim(0, 2.5)
-# plt.xlabel('MCR [kW]')
-# plt.ylabel('Sprint to Cruise Power Ratio [-]')
-#
-# # Save and close figure
-# plt.savefig('disp_powratio.png')
-# plt.clf()
+#-----
+# plot flywheel capacity and engine runtime
+plt.plot(fwCap, etaRun, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.axhline(y=0.1, color='green', linewidth=1, linestyle='dashed', label='0.1%')
+plt.axhline(y=0.5, color='orange', linewidth=1, linestyle='dashed', label='0.5%')
+plt.axhline(y=1, color='red', linewidth=1, linestyle='dashed', label='1.0%')
+
+# Create legend, labels
+plt.legend(loc='upper left')
+#plt.xscale("log")
+#plt.xlim(0, 1100)
+plt.ylim(0, 2)
+plt.xlabel('FESD Capacity [MJ]')
+plt.ylabel('Loitering Engine Runtime [%]')
+
+# Save and close figure
+plt.savefig('fwCap_etaRun.png')
+plt.clf()
+
+#-----
+# plot MCR and engine starts and runtime
+fig, ax1 = plt.subplots()
+ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+
+ax1.plot(PBcru, nStarts, color='blue', marker='o', linewidth=0, markersize=2, label='Starts')
+ax2.plot(PBcru, etaRun, color='red', marker='o', linewidth=0, markersize=2, label='Runtime')
+
+# Create legend, labels
+fig.legend(loc='upper left')
+#plt.xlim(0, 2000)
+#plt.ylim(0, 3)
+ax1.set_xlabel('Cruise MCR [kW]')
+ax1.set_ylabel('Loitering Engine Starts [-]')
+ax2.set_ylabel('Loitering Engine Runtime [%]')
+
+
+# Save and close figure
+plt.savefig('nStarts_etaRun_1.png')
+plt.clf()
+
+#-----
+# plot number of starts and runtime percentage
+plt.plot(nStarts, etaRun, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+
+# Create legend, labels
+plt.legend(loc='upper left')
+#plt.xlim(100, 600)
+#plt.ylim(100, 600)
+plt.xlabel('Number of Starts [-]')
+plt.ylabel('Runtime [%]')
+
+# Save and close figure
+plt.savefig('nStarts_etaRun_2.png')
+plt.clf()
+
+#-----
+# plot weight and displacement
+plt.plot(Wt, Disp, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.plot(Wt, Wt, label='Equal', color='red', linewidth=2)
+
+# Create legend, labels
+plt.legend(loc='upper left')
+plt.xlim(100, 600)
+plt.ylim(100, 600)
+plt.xlabel('Weight [MT]')
+plt.ylabel('Displacement [MT]')
+
+# Save and close figure
+plt.savefig('Wt_Disp.png')
+plt.clf()
+
+#-----
+# plot length and "excess" displacement
+plt.plot(L, Excess, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.axhline(y=0, color='red', linewidth=2)
+plt.axhline(y=-50, color='red', linewidth=1, linestyle='dashed')
+plt.axhline(y=50, color='red', linewidth=1, linestyle='dashed')
+
+
+# Create legend, labels
+plt.legend(loc='upper left')
+plt.xlim(20, 55)
+plt.ylim(-100, 300)
+plt.xlabel('Length [m]')
+plt.ylabel('Excess Displacement [MT]')
+
+# Save and close figure
+plt.savefig('L_Excess.png')
+plt.clf()
+
+#-----
+# plot displacement and stability
+plt.plot(Disp, GMT, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.axhline(y=0, color='red', linewidth=2)
+plt.axhline(y=.50, color='red', linewidth=1, linestyle='dashed')
+
+
+# Create legend, labels
+plt.legend(loc='upper left')
+plt.xlim(0, 600)
+plt.ylim(-1, 3)
+plt.xlabel('Displacement [MT]')
+plt.ylabel('GMT [m]')
+
+# Save and close figure
+plt.savefig('disp_gmt.png')
+plt.clf()
+
+#----
+# plot fuel weight and MCR
+plt.plot(MCR, percentFuel, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.axhline(y=.1, color='green', linewidth=1, linestyle='dashed', label='10%')
+plt.axhline(y=.3, color='orange', linewidth=1, linestyle='dashed', label='30%')
+plt.axhline(y=.5, color='red', linewidth=1, linestyle='dashed', label='50%')
+
+
+# Create legend, labels
+plt.legend(loc='upper left')
+plt.xlim(0, 2000)
+plt.ylim(0, 0.8)
+plt.xlabel('MCR [kW]')
+plt.ylabel('Percent of Weight that is Fuel [-]')
+
+# Save and close figure
+plt.savefig('fuel_mcr.png')
+plt.clf()
+
+#----
+# plot displacement and power ratio
+plt.plot(Disp, PBratio, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.axhline(y=1, color='green', linewidth=1, linestyle='dashed', label='Equal')
+plt.axhline(y=1.5, color='orange', linewidth=1, linestyle='dashed', label='1.5 times')
+plt.axhline(y=2, color='red', linewidth=1, linestyle='dashed', label='2 times')
+
+
+# Create legend, labels
+plt.legend(loc='lower left')
+plt.xlim(0, 1000)
+plt.ylim(0, 2.5)
+plt.xlabel('MCR [kW]')
+plt.ylabel('Sprint to Cruise Power Ratio [-]')
+
+# Save and close figure
+plt.savefig('disp_powratio.png')
+plt.clf()

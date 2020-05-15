@@ -24,7 +24,7 @@ indeps.add_output('B', 5, units='m') #meters
 indeps.add_output('fwCap', 300, units='MJ') #megajoules
 
 # add the fuel weight component from Fuel.py
-prob.model.add_subsystem('fuel', Fuel())
+prob.model.add_subsystem('fuel', Fuel()) #, promotes=['Cb','T','L','B','fuelWt','MCR','etaRun','nStarts'])
 # add the weights component from Weights.py
 prob.model.add_subsystem('wts', WeightsNoFuel())
 # add the stability component from Stability.py
@@ -41,6 +41,7 @@ prob.model.connect('indeps.L', ['wts.L', 'stab.L', 'fuel.L', 'const.L'])
 prob.model.connect('indeps.B', ['wts.B', 'stab.B', 'fuel.B', 'const.B'])
 prob.model.connect('fuel.MCR', 'wts.MCR')
 prob.model.connect('fuel.fuelWt', 'wts.fuelWt')
+prob.model.connect('indeps.fwCap', 'fuel.fwCap')
 
 # set the range for the independent variables that will be explored
 prob.model.add_design_var('indeps.Cb', lower=0.31, upper=0.59)
@@ -48,10 +49,10 @@ prob.model.add_design_var('indeps.T', lower=2, upper=5)
 prob.model.add_design_var('indeps.L', lower=25, upper=50)
 prob.model.add_design_var('indeps.B', lower=3, upper=12)
 prob.model.add_design_var('indeps.fwCap', lower=0, upper=1000)
+
 # add these variables to be calculated for each design
 prob.model.add_design_var('wts.Wt')
 prob.model.add_design_var('const.Disp')
-
 prob.model.add_design_var('stab.GMT')
 prob.model.add_design_var('fuel.fuelWt')
 prob.model.add_design_var('fuel.MCR')
@@ -65,8 +66,9 @@ prob.model.add_design_var('fuel.nStarts')
 # prob.model.add_objective('const.excess')
 
 # set driver for design of experiment
-#prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=50))
-prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=100))
+#prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=10000))
+# latin hypercube is much better at determining edge behavior
+prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=15000))
 prob.driver.add_recorder(om.SqliteRecorder("musvDOEv3cases.sql"))
 
 # this is the meat of the OpenMDAO run
@@ -96,10 +98,10 @@ with open('musvDOEv3cases.csv', mode='w') as csv_file:
 
 # print(len(cases))
 #
-# # printing related code
+# printing related code
 # values = []
 # for case in cases:
 #     outputs = cr.get_case(case).outputs
-#     values.append((outputs['indeps.Cb'], outputs['indeps.L'], outputs['stab.GMT'], outputs['wts.Wt'], outputs['const.Disp']))
+#     values.append((outputs['fuel.fuelWt'], outputs['indeps.L'], outputs['stab.GMT'], outputs['wts.Wt'], outputs['fuel.nStarts']))
 #
-# print("\n".join(["Cb: %5.2f, L: %5.2f, GMT: %5.2f, Wt: %6.2f, Disp: %6.2f" % xyf for xyf in values]))
+# print("\n".join(["Fuel Wt: %5.2f, L: %5.2f, GMT: %5.2f, Wt: %6.2f, Num Starts: %6.2f" % xyf for xyf in values]))
