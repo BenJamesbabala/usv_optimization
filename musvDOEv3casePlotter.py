@@ -184,6 +184,21 @@ plt.savefig('disp_nStarts.png')
 plt.clf()
 
 #-----
+# plot displacement and number of starts
+plt.plot(Disp, fwCap, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+
+# Create legend, labels
+plt.legend(loc='upper right')
+plt.xlim(0, 1000)
+plt.ylim(0, 1000)
+plt.xlabel('Displacement [MT]')
+plt.ylabel('Flywheel Capacity [MJ]')
+
+# Save and close figure
+plt.savefig('disp_fwCap.png')
+plt.clf()
+
+#-----
 # plot weight and displacement
 plt.plot(Wt, Disp, color='blue', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
 plt.plot(Wt, Wt, label='Equal', color='red', linewidth=2)

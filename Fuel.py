@@ -8,7 +8,7 @@ import math
 from fuelEstimate import missionFuel1, missionFuel1FW
 from estParam import wettedSurf, displacement
 
-# the definition of the Resistance component
+# the definition of the Fuel component
 class Fuel(om.ExplicitComponent):
     """
     Evaluates the fuel weight for a mission using resistance and powering estimates
@@ -44,45 +44,3 @@ class Fuel(om.ExplicitComponent):
         S = wettedSurf(L,B,T,Cb)
         # calls the missionFuel1 function - note that other missions could be used
         outputs['fuelWt'], outputs['MCR'], outputs['etaRun'], outputs['nStarts'] = missionFuel1FW(L, S, Displ, Cb, fwCap) # inputs in meters, meters^2, metric tonnes, unitless, megajoules
-
-# debugging code, verifies that inputs, outputs, and calculations are working properly within the component
-if __name__ == "__main__":
-    #define the model
-    model = om.Group()
-    #setup independent variables, will be chosen
-    #units defined within OpenMDAO for completeness
-    ivc = om.IndepVarComp()
-    ivc.add_output('L', 45.14, units='m') #meters
-    ivc.add_output('B', 4.234, units='m') #meters
-    ivc.add_output('T', 3.105, units='m') #meters
-    ivc.add_output('Cb', 0.354) #unitless
-    ivc.add_output('fwCap', 630, units='MJ') #megajoules
-
-    #define subsystems to reference variables
-    model.add_subsystem('des_vars', ivc)
-    model.add_subsystem('fuel_comp', Fuel())
-
-    #connect variables
-    model.connect('des_vars.L', 'fuel_comp.L')
-    model.connect('des_vars.B', 'fuel_comp.B')
-    model.connect('des_vars.T', 'fuel_comp.T')
-    model.connect('des_vars.Cb', 'fuel_comp.Cb')
-    model.connect('des_vars.fwCap', 'fuel_comp.fwCap')
-
-
-    #setup problem and run with initial definitions
-    prob = om.Problem(model)
-    prob.setup()
-    prob.run_model()
-    print("Fuel Weight: " + str(prob['fuel_comp.fuelWt']))
-    print("Max MCR: " + str(prob['fuel_comp.MCR']))
-    print("Runtime Frac: " + str(prob['fuel_comp.etaRun']))
-    print("Number of Starts: " + str(prob['fuel_comp.nStarts']))
-
-    # #change definitions and rerun
-    # prob['des_vars.Cb'] = 0.5
-    # prob['des_vars.T'] = 2.5
-    # prob['des_vars.L'] = 45
-    # prob['des_vars.B'] = 70
-    # prob.run_model()
-    # print(prob['wts_comp.Wt'])
