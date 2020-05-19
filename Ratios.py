@@ -19,9 +19,9 @@ class Ratios(om.ExplicitComponent):
         self.add_input('TL') #unitless
         self.add_input('Cb')  #unitless
 
-        self.add_output('L')
-        self.add_output('B')
-        self.add_output('T')
+        self.add_output('L', units='m')
+        self.add_output('B', units='m')
+        self.add_output('T', units='m')
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
