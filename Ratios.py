@@ -2,8 +2,6 @@
 from __future__ import division, print_function
 import openmdao.api as om
 import math
-from Weights import Weights
-from Stability import Stability
 from RatioWeights import RatioWeights
 
 # the definition of the Ratios component
@@ -19,9 +17,9 @@ class Ratios(om.ExplicitComponent):
         self.add_input('TL') #unitless
         self.add_input('Cb')  #unitless
 
-        self.add_output('L', units='m')
-        self.add_output('B', units='m')
-        self.add_output('T', units='m')
+        self.add_output('L', units='m', lower=19, upper=51)
+        self.add_output('B', units='m', lower=2, upper=12)
+        self.add_output('T', units='m', lower=1, upper=5)
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
@@ -35,14 +33,18 @@ class Ratios(om.ExplicitComponent):
         Cb = inputs['Cb']
 
         # calls the RatioWeights function
-        L,B,T,inBound = RatioWeights(L_to_B, B_to_T, T_to_L, Cb) # inputs are unitless,
+        L,B,T,inBound = RatioWeights(L_to_B, B_to_T, T_to_L, Cb) # inputs are unitless
         # primative error handling
         if inBound == 1:
-            print("Success! Converged to: ")
-            outputs['L'],outputs['B'],outputs['T'] = L,B,T
-        else:
-            print("Failed to converge!!!")
-            outputs['L'],outputs['B'],outputs['T'] = 0,0,0
+            #print("Success! Converged to: ")
+            outputs['L'] = L
+            outputs['B'] = B
+            outputs['T'] = T
+        if inBound == 0:
+            #print("Failed to converge!!!")
+            outputs['L'] = 1.0
+            outputs['B'] = 1.0
+            outputs['T'] = 1.0
 
 
 # debugging code, verifies that inputs, outputs, and calculations are working properly within the component
