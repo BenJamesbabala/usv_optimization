@@ -23,7 +23,7 @@ class Weights(om.ExplicitComponent):
         #self.add_input('MCR', units='kW') - Fixing power as it is an objective in RFP
         #self.add_input('Vk', units='kn') - Ignoring Vk because we do not intend for velocity to vary during an optimization
 
-
+        self.add_output('Disp', units='t')
         self.add_output('Wt', units='t')
 
         # Finite difference all partials.
@@ -42,6 +42,7 @@ class Weights(om.ExplicitComponent):
         # calls the parsonsWts function - note that other estimations could be used
         #outputs['Wt'] = parsonsWts(Cb, D, T, L, B, MCR, 16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
         outputs['Wt'] = grubisicWts(Cb, T, L, B, 500, 16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
+        outputs['Disp'] = (1.026*Cb*L*B*T) #metric tonnes, vessel displacement
 
 # the definition of the Weights component
 class WeightsNoFuel(om.ExplicitComponent):
@@ -58,6 +59,7 @@ class WeightsNoFuel(om.ExplicitComponent):
         self.add_input('MCR', units='kW')
         self.add_input('fuelWt', units='t')
 
+        self.add_output('Disp', units='t')
         self.add_output('Wt', units='t')
 
         # Finite difference all partials.
@@ -75,6 +77,7 @@ class WeightsNoFuel(om.ExplicitComponent):
         # calls the parsonsWts function - note that other estimations could be used
         #outputs['Wt'] = parsonsWts(Cb, D, T, L, B, MCR, 16) # inputs in unitless, meters, meters, meters, meters, kilowatts, knots
         outputs['Wt'] = grubisicWtsNoFuel(Cb, T, L, B, MCR, fuelWt) # inputs in unitless, meters, meters, meters, meters, kilowatts, metric tonnes
+        outputs['Disp'] = (1.026*Cb*L*B*T) #metric tonnes, vessel displacement
 
 # debugging code, verifies that inputs, outputs, and calculations are working properly within the component
 if __name__ == "__main__":
