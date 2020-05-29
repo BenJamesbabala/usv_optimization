@@ -13,6 +13,9 @@ import openmdao.api as om
 import math
 import csv
 import numpy as np
+# fault handler to assist in debugging
+#import faulthandler
+#faulthandler.enable()
 
 # build the model, defining units in the process`
 prob = om.Problem()
@@ -76,7 +79,8 @@ prob.model.add_constraint('fuel.etaRun', lower=0)
 
 
 prob.driver = om.pyOptSparseDriver(optimizer='NSGA2')
-#prob.driver.opt_settings['PopSize'] = 150
+#prob.driver.opt_settings["PopSize"] = 150
+prob.driver.opt_settings = {"PopSize": 150}
 #prob.driver.options['maxGen'] = 500
 
 
