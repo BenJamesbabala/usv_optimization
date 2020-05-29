@@ -1,5 +1,4 @@
 # estParam.py - functions to estimate hull parameters from principal characteristics
-# based on Grubisic 2012
 
 import math
 
@@ -16,6 +15,7 @@ def displacement(Cb, T, L, B) : # inputs in unitless, meters, meters, meters
 
 
 # ---------
+# based on Grubisic 2012
 def wettedSurf(Cb, T, L, B) : # inputs in unitless, meters, meters, meters
     # constants
     rho = 1026 #kg/m^3
