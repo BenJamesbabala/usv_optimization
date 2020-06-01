@@ -11,10 +11,15 @@ A collection of Python scripts that utilize OpenMDAO to provide a first order sy
 + [Current Version](#current-version)
 + [Future Work](#future-areas-of-work)
 + [Files](#files)
-  +[Run Files](#run-files)
+  + [Run Files](#run-files)
+  + [Outputs](#outputs)
+  + [OpenMDAO Components](#openmdao-components)
+  + [Calculation Scripts](#calculation-scripts)
++ [Deprecated Files](#deprecated-files)
++ [References](#references)
 
-## Current Version 
-### (June 1, 2020) 
+## Current Version
+### (June 1, 2020)
 *A version label has been added to files to track active development versus established codes.  Below are the last working versions, the version one higher is in development.*
 + Design Space Exploration – `musvDOEv3.py`
 + Multi-variable Optimization – `musvOPTv1.py` (bugs still exist)
