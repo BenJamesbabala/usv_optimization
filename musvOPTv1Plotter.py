@@ -7,10 +7,11 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from poweringEstimate import poweringEstimate
 from estParam import wettedSurf
 
-# setup write to CSV with outputs
+# setup read of output file
 with open('nsga2_best_pop.out', newline='') as csv_file:
     # read csv file
     reader = csv.reader(csv_file, delimiter='	', quoting=csv.QUOTE_NONNUMERIC)
+    # note - must add quotation marks to non-data rows in file header
 
     # skip header rows
     next(reader)
