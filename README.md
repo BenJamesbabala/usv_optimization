@@ -64,8 +64,8 @@ A collection of Python scripts that utilize OpenMDAO to provide a first order sy
 + `weightCurves.py`contains the Parson's weight estimation method, and well as two weight estimates based on Grubisic 2009 (one takes fuel weight as an input, one assumes constant speed mission).  More weight estimates can be added as functions.
 + `flywheelWeight.py` contains a rudimentary estimation of the weight of a flywheel energy storage device, based on regression of commercially available models.  More weight estimates can be added as functions.
 + `poweringEstimate.py` estimates required brake propulsion power based on equations in Parsons' NA470 Coursepack
-+ `fuelEstimate.py`
-+ `RatioWeights.py`
++ `fuelEstimate.py` estimates fuel weight and exports maximum engine power required based on `poweringEstimate`.  Uses a preset mission profile, currently hard-coded with parameters.  For the fuel estimate including flyhweels, flyhweel energy storage device weight is included in fuel weight.
++ `RatioWeights.py` script to attempt balancing weight and displacement for a given set of dimensionless ratios to find dimensions of a vessel. 
 
 
 ## Deprecated Files
