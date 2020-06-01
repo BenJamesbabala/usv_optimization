@@ -3,8 +3,9 @@ A collection of Python scripts that utilize OpenMDAO to provide a first order sy
 
 ### Packages Needed
 + OpenMDAO and dependents
+  + OpenMDAO contains a number of dependents, not all are strictly needed for these scripts
 + pyOptSparse and dependents
-  + mpi4py and petsc are very important
+  + mpi4py and petsc are very important, and improper installation appears to cause issues
 
 
 ## Last Working Versions (June 1, 2020)
@@ -14,7 +15,7 @@ A collection of Python scripts that utilize OpenMDAO to provide a first order sy
 
 ## Future Areas of Work
 - [x] Completed Task
-- [] Uncompleted Task
+- [ ] Incomplete Task
 
 ## Files
 #### Run Files
