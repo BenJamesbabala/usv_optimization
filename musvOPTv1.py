@@ -71,16 +71,17 @@ model.add_objective('fuel.nStarts')
 
 # add the constraints to the model
 prob.model.add_constraint('wts.Wt', lower=0)
-prob.model.add_constraint('stab.GMT', lower=0)
-prob.model.add_constraint('fuel.MCR', lower=0, upper=2000)
+prob.model.add_constraint('stab.GMT', lower=0.01)
+prob.model.add_constraint('fuel.MCR', lower=0, upper=3000)
 prob.model.add_constraint('fuel.fuelWt', lower=0, upper=100)
-prob.model.add_constraint('const.Excess', lower=-20, upper=20)
+prob.model.add_constraint('const.Excess', lower=-10, upper=10)
 prob.model.add_constraint('fuel.etaRun', lower=0)
+prob.model.add_constraint('fuel.PBratio', lower=0, upper=3)
 
 
 prob.driver = om.pyOptSparseDriver(optimizer='NSGA2')
-prob.driver.opt_settings["PopSize"] = 160 # 100 is default size, MUST BE A MULTIPLE OF 4
-prob.driver.opt_settings["maxGen"] = 500 # 1000 is default size
+prob.driver.opt_settings["PopSize"] = 240 # 100 is default size, MUST BE A MULTIPLE OF 4
+prob.driver.opt_settings["maxGen"] = 300 # 1000 is default size
 
 
 prob.set_solver_print(level=0)

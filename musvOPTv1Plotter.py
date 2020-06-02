@@ -4,18 +4,17 @@
 import csv
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
-from poweringEstimate import poweringEstimate
-from estParam import wettedSurf
+
+outpath = './results/OPTv1/'
 
 # setup read of output file
 with open('nsga2_best_pop.out', newline='') as csv_file:
+    # skip header rows
+    next(csv_file)
+    next(csv_file)
+
     # read csv file
     reader = csv.reader(csv_file, delimiter='	', quoting=csv.QUOTE_NONNUMERIC)
-    # note - must add quotation marks to non-data rows in file header
-
-    # skip header rows
-    next(reader)
-    next(reader)
 
     # -- set up lists for data
     # objectives
@@ -29,34 +28,24 @@ with open('nsga2_best_pop.out', newline='') as csv_file:
     fuelWt = [] # index = 9
     Excess = [] # index = 11
     etaRun = [] # index = 13
+    PBratio = [] # index = 15
 
     # design variables
-    Cb = [] # index = 14
-    T = [] # index = 15
-    L = [] # index = 16
-    B = [] # index = 17
-    fwCap = [] # index = 18
+    Cb = [] # index = 16
+    T = [] # index = 17
+    L = [] # index = 18
+    B = [] # index = 19
+    fwCap = [] # index = 20
 
     # calculated values
     percentFuel = []
-    PBcru = []
-    PBspr = []
-    PBratio = []
     LB = []
     BT = []
     TL = []
 
     # iterate through all designs
     for row in reader:
-        # # require positive GMT
-        # if row[5] > 0:
-        #     # require weight/displacement within 10%
-        #     if abs(row[11]) < (0.1*row[0]):
-        #         # require sprint power within thrice cruise power
-        #         PBcruise = poweringEstimate(row[16], wettedSurf(row[14], row[15], row[16], row[17]), row[0], row[14], 16) #kW
-        #         PBsprint = poweringEstimate(row[16], wettedSurf(row[14], row[15], row[16], row[17]), row[0], row[14], 27) #kW
-        #         if (PBsprint/PBcruise) < 3:
-                    #read data into lists
+        #read data into lists
         Disp.append(row[0])
         nStarts.append(row[1])
 
@@ -66,23 +55,20 @@ with open('nsga2_best_pop.out', newline='') as csv_file:
         fuelWt.append(row[9])
         Excess.append(row[11])
         etaRun.append((row[13]*100)) #convert to percentage
+        PBratio.append(row[15])
 
-        Cb.append(row[14])
-        T.append(row[15])
-        L.append(row[16])
-        B.append(row[17])
-        fwCap.append(row[18])
+        Cb.append(row[16])
+        T.append(row[17])
+        L.append(row[18])
+        B.append(row[19])
+        fwCap.append(row[20])
 
         percentFuel.append((row[9]/row[3])*100)  #convert to percentage
-        PBcruise = poweringEstimate(row[16], wettedSurf(row[14], row[15], row[16], row[17]), row[0], row[14], 16) #kW
-        PBsprint = poweringEstimate(row[16], wettedSurf(row[14], row[15], row[16], row[17]), row[0], row[14], 27) #kW
-        PBcru.append(PBcruise)
-        PBspr.append(PBsprint)
-        PBratio.append(PBsprint/PBcruise)
-        LB.append(row[15]/row[16])
-        BT.append(row[16]/row[17])
-        TL.append(row[17]/row[15])
-        #print("L: ",row[16]," B: ",row[17]," T: ",row[15]," Cb: ",row[14])
+
+        LB.append(row[18]/row[19])
+        BT.append(row[19]/row[17])
+        TL.append(row[17]/row[18])
+        print("L: ",row[18]," B: ",row[19]," T: ",row[17]," Cb: ",row[16])
 
     numFeasible = len(Disp)
 
@@ -108,8 +94,9 @@ with open('nsga2_best_pop.out', newline='') as csv_file:
 # plt.show()
 #
 # # # Save and close figure
-# # plt.savefig('Wt_Disp.png')
+# # plt.savefig(outpath+'Wt_Disp.png')
 # # plt.clf()
+
 #-----
 # plot flywheel capacity and engine starts
 plt.plot(fwCap, nStarts, color='green', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
@@ -125,7 +112,7 @@ plt.xlabel('FESD Capacity [MJ]')
 plt.ylabel('Loitering Engine Starts [-]')
 
 # Save and close figure
-plt.savefig('fwCap_nStarts.png')
+plt.savefig(outpath+'fwCap_nStarts.png')
 plt.clf()
 
 #-----
@@ -144,7 +131,7 @@ plt.xlabel('FESD Capacity [MJ]')
 plt.ylabel('Loitering Engine Runtime [%]')
 
 # Save and close figure
-plt.savefig('fwCap_etaRun.png')
+plt.savefig(outpath+'fwCap_etaRun.png')
 plt.clf()
 
 #-----
@@ -152,20 +139,20 @@ plt.clf()
 fig, ax1 = plt.subplots()
 ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
 
-ax1.plot(PBcru, nStarts, color='green', marker='o', linewidth=0, markersize=2, label='Starts')
-ax2.plot(PBcru, etaRun, color='red', marker='o', linewidth=0, markersize=2, label='Runtime')
+ax1.plot(MCR, nStarts, color='green', marker='o', linewidth=0, markersize=2, label='Starts')
+ax2.plot(MCR, etaRun, color='red', marker='o', linewidth=0, markersize=2, label='Runtime')
 
 # Create legend, labels
 fig.legend(loc='upper left')
 #plt.xlim(0, 2000)
 #plt.ylim(0, 3)
-ax1.set_xlabel('Cruise MCR [kW]')
+ax1.set_xlabel('Max MCR [kW]')
 ax1.set_ylabel('Loitering Engine Starts [-]')
 ax2.set_ylabel('Loitering Engine Runtime [%]')
 
 
 # Save and close figure
-plt.savefig('nStarts_etaRun_1.png')
+plt.savefig(outpath+'nStarts_etaRun_1.png')
 plt.clf()
 
 #-----
@@ -174,13 +161,13 @@ plt.plot(nStarts, etaRun, color='green', marker='o', linewidth=0, markersize=2, 
 
 # Create legend, labels
 plt.legend(loc='upper left')
-plt.xlim(0, 200)
-plt.ylim(0, 1.2)
+#plt.xlim(0, 200)
+#plt.ylim(0, 2)
 plt.xlabel('Number of Starts [-]')
 plt.ylabel('Runtime [%]')
 
 # Save and close figure
-plt.savefig('nStarts_etaRun_2.png')
+plt.savefig(outpath+'nStarts_etaRun_2.png')
 plt.clf()
 
 #-----
@@ -195,7 +182,7 @@ plt.xlabel('Displacement [MT]')
 plt.ylabel('Number of Starts [-]')
 
 # Save and close figure
-plt.savefig('disp_nStarts.png')
+plt.savefig(outpath+'disp_nStarts.png')
 plt.clf()
 
 #-----
@@ -204,13 +191,13 @@ plt.plot(Disp, fwCap, color='green', marker='o', linewidth=0, markersize=2, labe
 
 # Create legend, labels
 plt.legend(loc='upper right')
-plt.xlim(0, 1000)
-plt.ylim(0, 1000)
+plt.xlim(0, 500)
+plt.ylim(0, 1100)
 plt.xlabel('Displacement [MT]')
 plt.ylabel('Flywheel Capacity [MJ]')
 
 # Save and close figure
-plt.savefig('disp_fwCap.png')
+plt.savefig(outpath+'disp_fwCap.png')
 plt.clf()
 
 #-----
@@ -220,32 +207,13 @@ plt.plot(Wt, Wt, label='Equal', color='red', linewidth=2)
 
 # Create legend, labels
 plt.legend(loc='upper left')
-plt.xlim(100, 600)
-plt.ylim(100, 600)
+plt.xlim(100, 400)
+plt.ylim(100, 400)
 plt.xlabel('Weight [MT]')
 plt.ylabel('Displacement [MT]')
 
 # Save and close figure
-plt.savefig('Wt_Disp.png')
-plt.clf()
-
-#-----
-# plot length and "excess" displacement
-plt.plot(L, Excess, color='green', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
-plt.axhline(y=0, color='red', linewidth=2)
-plt.axhline(y=-50, color='red', linewidth=1, linestyle='dashed')
-plt.axhline(y=50, color='red', linewidth=1, linestyle='dashed')
-
-
-# Create legend, labels
-plt.legend(loc='upper left')
-plt.xlim(20, 55)
-plt.ylim(-100, 100)
-plt.xlabel('Length [m]')
-plt.ylabel('Excess Displacement [MT]')
-
-# Save and close figure
-plt.savefig('L_Excess.png')
+plt.savefig(outpath+'Wt_Disp.png')
 plt.clf()
 
 #-----
@@ -254,52 +222,49 @@ plt.plot(Disp, GMT, color='green', marker='o', linewidth=0, markersize=2, label=
 plt.axhline(y=0, color='red', linewidth=2)
 plt.axhline(y=.50, color='red', linewidth=1, linestyle='dashed')
 
-
 # Create legend, labels
 plt.legend(loc='upper left')
-plt.xlim(0, 800)
-plt.ylim(-.25, 4)
+plt.xlim(100, 300)
+plt.ylim(-.25, 1.25)
 plt.xlabel('Displacement [MT]')
 plt.ylabel('GMT [m]')
 
 # Save and close figure
-plt.savefig('disp_gmt.png')
+plt.savefig(outpath+'disp_gmt.png')
 plt.clf()
 
 #----
 # plot fuel weight and MCR
-plt.plot(PBcru, percentFuel, color='green', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.plot(MCR, percentFuel, color='green', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
 plt.axhline(y=10, color='green', linewidth=1, linestyle='dashed', label='10%')
 plt.axhline(y=30, color='orange', linewidth=1, linestyle='dashed', label='30%')
 plt.axhline(y=50, color='red', linewidth=1, linestyle='dashed', label='50%')
-
 
 # Create legend, labels
 plt.legend(loc='upper left')
 #plt.xlim(0, 2000)
 plt.ylim(0, 80)
-plt.xlabel('Cruise MCR [kW]')
+plt.xlabel('Max MCR [kW]')
 plt.ylabel('Percent of Weight that is Fuel [-]')
 
 # Save and close figure
-plt.savefig('fuel_mcr.png')
+plt.savefig(outpath+'fuel_mcr.png')
 plt.clf()
 
 #----
 # plot displacement and power ratio
-plt.plot(PBcru, PBratio, color='green', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
+plt.plot(MCR, PBratio, color='green', marker='o', linewidth=0, markersize=2, label=(str(numFeasible) + ' Feasible Designs'))
 plt.axhline(y=1, color='green', linewidth=1, linestyle='dashed', label='Equal')
 plt.axhline(y=1.5, color='orange', linewidth=1, linestyle='dashed', label='1.5 times')
 plt.axhline(y=2, color='red', linewidth=1, linestyle='dashed', label='2 times')
 
-
 # Create legend, labels
 plt.legend(loc='lower left')
 #plt.xlim(0, 2000)
-plt.ylim(0, 2.5)
-plt.xlabel('Cruise MCR [kW]')
+plt.ylim(0, 5)
+plt.xlabel('Max MCR [kW]')
 plt.ylabel('Sprint to Cruise Power Ratio [-]')
 
 # Save and close figure
-plt.savefig('mcr_powratio.png')
+plt.savefig(outpath+'mcr_powratio.png')
 plt.clf()
