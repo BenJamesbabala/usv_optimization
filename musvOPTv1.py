@@ -79,9 +79,8 @@ prob.model.add_constraint('fuel.etaRun', lower=0)
 
 
 prob.driver = om.pyOptSparseDriver(optimizer='NSGA2')
-#prob.driver.opt_settings["PopSize"] = 150
-prob.driver.opt_settings = {"PopSize": 150}
-#prob.driver.options['maxGen'] = 500
+prob.driver.opt_settings["PopSize"] = 160 # 100 is default size, MUST BE A MULTIPLE OF 4
+prob.driver.opt_settings["maxGen"] = 500 # 1000 is default size
 
 
 prob.set_solver_print(level=0)
