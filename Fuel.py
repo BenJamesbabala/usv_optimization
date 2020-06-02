@@ -28,7 +28,6 @@ class Fuel(om.ExplicitComponent):
         self.add_output('nStarts')
         self.add_output('PBratio')
 
-
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
 
