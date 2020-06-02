@@ -26,6 +26,8 @@ class Fuel(om.ExplicitComponent):
         self.add_output('MCR', units='kW')
         self.add_output('etaRun')
         self.add_output('nStarts')
+        self.add_output('PBratio')
+
 
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
@@ -43,4 +45,4 @@ class Fuel(om.ExplicitComponent):
         Displ = displacement(L,B,T,Cb)
         S = wettedSurf(L,B,T,Cb)
         # calls the missionFuel1 function - note that other missions could be used
-        outputs['fuelWt'], outputs['MCR'], outputs['etaRun'], outputs['nStarts'] = missionFuel1FW(L, S, Displ, Cb, fwCap) # inputs in meters, meters^2, metric tonnes, unitless, megajoules
+        outputs['fuelWt'], outputs['MCR'], outputs['etaRun'], outputs['nStarts'], outputs['PBratio'] = missionFuel1FW(L, S, Displ, Cb, fwCap) # inputs in meters, meters^2, metric tonnes, unitless, megajoules

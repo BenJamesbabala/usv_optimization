@@ -82,6 +82,7 @@ def missionFuel1FW(L, S, Disp, Cb, fwCap) : #inputs in meters, meters^2, metric 
     PLoiter = powSleep #kW
 
     PMax = max(PSprint, PComm, PCruise, PLoiter) #kW
+    PBratio = PBSprint/PBCruise # unitless
 
     if (fwCap > 0.0):
         # calculate flywheel charge/discharge times
@@ -102,7 +103,7 @@ def missionFuel1FW(L, S, Disp, Cb, fwCap) : #inputs in meters, meters^2, metric 
 
     fuelTot = fuelSprint + fuelComm + fuelCruise + fuelLoiter + fwWgt(fwCap)
 
-    return fuelTot, PMax, etaRun, nStarts
+    return fuelTot, PMax, etaRun, nStarts, PBratio
     #return fuelTot, PMax, PBCruise, PBSprint, etaRun, nStarts
 
 # #fuel, MCR, cru, spr, run, starts = missionFuel1FW(26.32,189.727,198.55,.342,1000) #missionFuel1FW(L, S, Disp, Cb, fwCap) inputs in meters, meters^2, metric tonnes, unitless, megajoules
